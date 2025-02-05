@@ -1,0 +1,182 @@
+import * as React from "react";
+import {
+  BookOpen,
+  Bot,
+  GalleryVerticalEnd,
+  PieChart,
+  Settings2,
+  SquareTerminal,
+  UserCog,
+  ShoppingBasket,
+  Group,
+  LocateFixed,
+} from "lucide-react";
+import { NavMain } from "@components/components/nav-main";
+import { NavProjects } from "@components/components/nav-projects";
+import { NavUser } from "@components/components/nav-user";
+import { TeamSwitcher } from "@components/components/team-switcher";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarRail,
+} from "@components/components/ui/sidebar";
+import APP from "../../../dataCred.js";
+
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  teams: [
+    {
+      name: "Divyam",
+      logo: GalleryVerticalEnd,
+      plan: "Pvt Ltd",
+    },
+    // {
+    //   name: "Acme Corp.",
+    //   logo: AudioWaveform,
+    //   plan: "Startup",
+    // },
+    // {
+    //   name: "Evil Corp.",
+    //   logo: Command,
+    //   plan: "Free",
+    // },
+  ],
+  navMain: [
+    {
+      title: "Home",
+      url: "http://localhost:5173/dashboard/",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "Home",
+          url: `${APP?.APP_URL}/dashboard`,
+        },
+      ],
+    },
+    // ${APP && APP.APP_BACKEND_URL}/dashboard/package
+    {
+      title: "Orders",
+      url: "#",
+      icon: Bot,
+      items: [
+        {
+          title: "All",
+          url: `${APP?.APP_URL}/dashboard/order`,
+        },
+        ,
+        {
+          title: "Pending",
+          url: `${APP?.APP_URL}/dashboard/order-pending`,
+        },
+        {
+          title: "Complete",
+          url: `${APP?.APP_URL}/dashboard/order-complete`,
+        },
+      ],
+    },
+    {
+      title: "Users",
+      url: "#",
+      icon: BookOpen,
+      items: [
+        {
+          title: "All",
+          url: `${APP?.APP_URL}/dashboard/users`,
+        },
+        {
+          title: "Verified",
+          url: `${APP?.APP_URL}/dashboard/verified-users`,
+        },
+      ],
+    },
+    {
+      title: "Delivery Areas",
+      url: `${APP?.APP_URL}/dashboard/delivery-areas`,
+      icon: LocateFixed,
+      items: [
+        {
+          title: "All Address List",
+          url: `${APP?.APP_URL}/dashboard/delivery-area-lists`,
+        },
+        {
+          title: "Add New Address ",
+          url: `${APP?.APP_URL}/dashboard/add-new-area`,
+        },
+      ],
+    },
+
+    {
+      title: "Packages",
+      url: `${APP?.APP_URL}/dashboard/package"`,
+      icon: Group,
+      items: [
+        {
+          title: "Packages",
+          url: `${APP?.APP_URL}/dashboard/package`,
+        },
+        {
+          title: "Add New Packages",
+          url: `${APP?.APP_URL}/dashboard/add-new-package`,
+        },
+      ],
+    },
+
+    {
+      title: "Manager",
+      url: "#",
+      icon: UserCog,
+      items: [
+        {
+          title: "Manager",
+          url: `${APP?.APP_URL}/dashboard/manager`,
+        },
+        {
+          title: "New Manager",
+          url: `${APP?.APP_URL}/dashboard/new-manager`,
+        },
+      ],
+    },
+
+    {
+      title: "Settings",
+      url: "#",
+      icon: Settings2,
+      items: [
+        {
+          title: "General",
+          url: `${APP?.APP_URL}/dashboard/setting/general`,
+        },
+      ],
+    },
+  ],
+  projects: [
+    {
+      name: "Sales & Marketing",
+      url: "#",
+      icon: PieChart,
+    },
+  ],
+};
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <TeamSwitcher teams={data.teams} />
+      </SidebarHeader>
+      <SidebarContent>
+        <NavMain items={data.navMain} />
+        <NavProjects projects={data.projects} />
+      </SidebarContent>
+      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
