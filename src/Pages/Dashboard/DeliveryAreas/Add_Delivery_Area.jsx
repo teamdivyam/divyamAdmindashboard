@@ -20,10 +20,8 @@ import {
   DialogTrigger,
 } from "@components/components/ui/dialog";
 
-import DatePickerWithYear from "./CustomDatePicker.tsx";
 import { Switch } from "@components/components/ui/switch";
 
-import Loader from "../../../components/components/Loader";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -258,7 +256,6 @@ const Add_Delivery_Area = () => {
 
   return (
     <>
-      {JSON.stringify(state)}
       <Toaster richColors />
       <Dialog open={openConfirm} onOpenChange={setConfirmOpen}>
         <DialogContent>

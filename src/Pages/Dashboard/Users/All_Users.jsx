@@ -6,10 +6,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-
 import { NavLink, useNavigate } from "react-router-dom";
-import APP from "../../../../dataCred.js";
 
+import APP from "../../../../dataCred.js";
 import UserCard from "./UserCard.jsx";
 import { useForm } from "react-hook-form";
 import { Button } from "@components/components/ui/button";
@@ -18,7 +17,6 @@ import * as yup from "yup";
 import debounce from "lodash.debounce";
 
 import { Toaster } from "@components/components/ui/sonner";
-
 import { ChevronsRight, ChevronsLeft } from "lucide-react";
 import Loader from "../../../components/components/Loader.jsx";
 
@@ -208,23 +206,21 @@ const All_Users = () => {
     fetchData();
   }, [state]);
 
-  const showErrorMsgs = () => {
+  // http://localhost:3000/api/admin/search-user?name="d"&mobile=7267097201
+
+  if (users) {
     if (!users.length) {
       return (
-        <span className="text-center font-medium text-slate-400 flex justify-center items-center mt-8">
-          Opps No data found
+        <span className="block lg:mt-20 text-center font-medium text-neutral-500">
+          Oops! No users have signed up yet. 😊
         </span>
       );
     }
-  };
-
+  }
   return (
     <>
-      {err ? (
-        <Loader isFullScreen={true} />
-      ) : (
+      {err ? null : (
         <>
-          {/* http://localhost:3000/api/admin/search-user?name="d"&mobile=7267097201 */}
           <div
             id="userProfile_wrapper "
             className="bg-neutral-50 border p-12  w-1/2 rounded-md mx-auto relative
@@ -255,7 +251,7 @@ const All_Users = () => {
               </button>
             </form>
 
-            {showErrorMsgs()}
+            {/* {showErrorMsgs()} */}
 
             {
               <ul className="flex lg:flex-col gap-3 lg:mt-4">

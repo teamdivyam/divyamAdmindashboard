@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import APP from "../../../../dataCred";
 import { Toaster } from "@components/components/ui/sonner";
-import { toast } from "sonner";
 import { UserRound, MapPin, Phone, Calendar } from "lucide-react";
 import { Badge } from "@components/components/ui/badge";
 import { Button } from "@components/components/ui/Button";
+import { format } from "date-fns";
+
 import {
   Dialog,
   DialogContent,
@@ -13,6 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@components/components/ui/dialog";
+
+import SetSupervisorToManagerDialog from "./SelectSuperVisorDialoge/setSupervisorToManagerDialog";
 
 const Gender_MALE_ICON = () => {
   return (
@@ -57,13 +60,14 @@ const Gender_Female_Icon = () => {
 };
 
 const ViewManager = () => {
-  const [emp, setEmp] = useState(null);
+  const [emp, setEmp] = useState(null); //store response data in employee-state
   const { EMP_ID } = useParams();
   const navigate = useNavigate();
   const getTOKEN = localStorage.getItem("AppID");
   const [open, setOpen] = useState(false);
+  const [showSuperVisorDialog, setShowSuperVisorDialog] = useState(false);
 
-  const handleDeleteUser = () => {
+  const handleDeleteEMP = () => {
     const DELETE_EMP = async () => {
       try {
         const res = await fetch(
@@ -103,8 +107,6 @@ const ViewManager = () => {
             headers: {
               Authorization: `Bearer ${getTOKEN}`,
               "Content-Type": "application/json",
-              Accept: "application/json, application/xml",
-              "Accept-Language": "en_US",
             },
           }
         );
@@ -114,7 +116,7 @@ const ViewManager = () => {
 
         const result = await res.json();
 
-        if (result.success) {
+        if (result) {
           setEmp(result);
         }
       } catch (error) {
@@ -125,147 +127,174 @@ const ViewManager = () => {
   }, []);
 
   return (
-    <div>
-      <Toaster />
+    <>
+      <div>
+        <Toaster />
+        <div
+          className="bg-orange-50 dark:bg-gray-700 rounded-lg border p-6 mx-auto w-1/2"
+          id="oderPreview"
+        >
+          <div className="cardHeader flex justify-between">
+            <Badge
+              variant="destructive"
+              className="bg-orange-400 py-1 cursor-pointer hover:bg-orange-400 "
+            >
+              <UserRound />
+              <span className="pl-2 uppercase font-medium text-white rounded-sm px-3">
+                {emp && emp.role}
+              </span>
+            </Badge>
 
-      <div
-        className="bg-orange-50 dark:bg-gray-700 rounded-lg border p-6 mx-auto w-1/2"
-        id="oderPreview"
-      >
-        <div className="cardHeader flex justify-between">
-          <Badge
-            variant="destructive"
-            className="bg-orange-400 py-1 cursor-pointer hover:bg-orange-400 "
-          >
-            <UserRound />
-            <span className="pl-2 uppercase font-medium text-white rounded-sm px-3">
-              Employee
-            </span>
-          </Badge>
-
-          <Badge
-            variant="destructive"
-            className="bg-white text-neutral-500 hover:bg-white"
-          >
-            <span className="font-">Joined Date:</span>
-            <span
-              className="inline-block uppercase pl-1 rounded-full  text-neutral-500
+            <Badge
+              variant="destructive"
+              className="bg-white text-neutral-500 hover:bg-white"
+            >
+              <span className="font-">Joined Date:</span>
+              <span
+                className="inline-block uppercase pl-1 rounded-full  text-neutral-500
       font-medium 
       "
-            >
-              {`${emp && emp.createdAt}`}
-            </span>
-          </Badge>
-        </div>
+              >
+                {`${emp && format(emp.createdAt, "MM-dd-yyyy")}`}
+              </span>
+            </Badge>
+          </div>
 
-        <div className="cardBody bg-white dark:bg-slate-800 rounded-md border p-6 mt-6">
-          <div className="userProfile flex flex-row ">
-            <img
-              src={
-                emp?.profile
-                  ? `${APP.IMG_PATH}/Uploads/employee/${emp.profile}`
-                  : "https://placehold.co/400x400?text=Loading.."
-              }
-              className="size-48 rounded-lg shadow-sm"
-            />
-            <div className="profileText pt-10 pl-10">
-              <h2 className="font-medium text-neutral-600 text-3xl flex items-center">
-                {emp && emp.fullName ? emp.fullName : "Not Available"}
-                <span
-                  title={emp && emp.gender == "male" ? "Male" : "Female"}
-                  className="rounded-full size-8 flex justify-center items-center ml-2 p-2 text-white bg-orange-400"
-                >
-                  {emp && emp.gender == "male" ? (
-                    <Gender_MALE_ICON />
+          <div className="cardBody bg-white dark:bg-slate-800 rounded-md border p-6 mt-6">
+            <div className="userProfile flex flex-row ">
+              {/* <img
+                src={
+                  emp?.profile
+                    ? `${APP.IMG_PATH}/Uploads/employee/${emp.profile}`
+                    : "https://placehold.co/400x400?text=Loading.."
+                }
+                className="size-48 rounded-lg shadow-sm"
+              /> */}
+              <img
+                src="https://i.pravatar.cc/300"
+                className="size-48 rounded-lg shadow-sm"
+              />
+              <div className="profileText pt-10 pl-10">
+                <h2 className="font-medium text-neutral-600 text-3xl flex items-center">
+                  {emp && emp.fullName ? emp.fullName : "Not Available"}
+                  <span
+                    title={emp && emp.gender == "male" ? "Male" : "Female"}
+                    className="rounded-full size-8 flex justify-center items-center ml-2 p-2 text-white bg-orange-400"
+                  >
+                    {emp && emp.gender == "male" ? (
+                      <Gender_MALE_ICON />
+                    ) : (
+                      <Gender_Female_Icon />
+                    )}
+                  </span>
+                </h2>
+                <p className="mobileNum flex items-center pt-2 text-neutral-400">
+                  {emp && emp.mobileNum ? (
+                    <>
+                      <Phone />
+                      <span className="pl-2">{emp.mobileNum}</span>
+                    </>
                   ) : (
-                    <Gender_Female_Icon />
+                    "Mobile number is not available"
                   )}
-                </span>
-              </h2>
-              <p className="mobileNum flex items-center pt-2 text-neutral-400">
-                {emp && emp.mobileNum ? (
-                  <>
-                    <Phone />
-                    <span className="pl-2">{emp.mobileNum}</span>
-                  </>
-                ) : (
-                  "Mobile number is not available"
-                )}
-              </p>
-              <p className="age  mt-2  flex items-center  text-neutral-400">
-                {emp && emp.dob ? (
-                  <>
-                    <Calendar />
-                    <span className="pl-2 font-normal">{emp.dob}</span>
-                  </>
-                ) : (
-                  "Date of birth is not available"
-                )}
-              </p>
-              <p className="mt-2 flex text-neutral-400 ">
-                {emp && emp.address ? (
-                  <>
-                    <MapPin className="" />
-                    <span className="pl-2">
-                      {`${emp.address}  `}
-                      <span className="font-medium font-">
-                        {emp && emp.address}
+                </p>
+                <p className="age  mt-2  flex items-center  text-neutral-400">
+                  {emp && emp.dob ? (
+                    <>
+                      <Calendar />
+                      <span className="pl-2 font-normal">
+                        {format(emp.dob, "MM-dd-yyyy")}
                       </span>
-                    </span>
-                  </>
-                ) : (
-                  "user Address is not available"
-                )}
-              </p>
+                    </>
+                  ) : (
+                    "Date of birth is not available"
+                  )}
+                </p>
+                <p className="mt-2 flex text-neutral-400 ">
+                  {emp && emp.address ? (
+                    <>
+                      <MapPin className="" />
+                      <span className="pl-2">
+                        {`${emp.address}  `}
+                        <span className="font-medium font-">
+                          {emp && emp.address}
+                        </span>
+                      </span>
+                    </>
+                  ) : (
+                    "user Address is not available"
+                  )}
+                </p>
+              </div>
             </div>
           </div>
+
+          {emp && emp?.role === "manager" ? (
+            <div className="border-b mt-4  p-2 text-white">
+              <h2 className="text-neutral-400 text-nowrap font-normal capitalize">
+                Choose supervisor
+              </h2>
+
+              <SetSupervisorToManagerDialog
+                IsDialogVisible={showSuperVisorDialog}
+                ManagerInfo={emp}
+              />
+
+              <button
+                className="w-full border border-orange-200 rounded-md bg-orange-100 shadow-sm text-gray-600  p-2  text-left text-lg"
+                onClick={() => {
+                  setShowSuperVisorDialog((p) => !p);
+                }}
+              >
+                Choose now
+              </button>
+            </div>
+          ) : null}
+
+          {/* DELETE USER PROFILE */}
+          <div id="userProfileDeleteAction" className="w-full flex justify-end">
+            <Button
+              variant="destructive"
+              className="mt-8 flex justify-center items-center w-32 "
+              onClick={() => {
+                setOpen((prev) => !prev);
+              }}
+            >
+              Delete
+            </Button>
+          </div>
         </div>
-        {/* DELETE USER PROFILE */}
-        <div id="userProfileDeleteAction" className="w-full flex justify-end">
-          <Button
-            variant="destructive"
-            className="mt-8 flex justify-center items-center w-32 "
-            onClick={() => {
-              setOpen((prev) => !prev);
-            }}
-          >
-            Delete
-          </Button>
-        </div>
+
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Are you sure ?</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+                <span className=" mt-4 flex justify-end gap-3">
+                  <Button
+                    variant="secondary"
+                    className="w-28 "
+                    onClick={() => setOpen((prev) => !prev)}
+                  >
+                    Cancel
+                  </Button>
+
+                  <Button
+                    variant="destructive"
+                    className="w-28 "
+                    onClick={handleDeleteEMP}
+                  >
+                    Confirm
+                  </Button>
+                </span>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      {/*__Model__*/}
-
-      <Dialog open={open} onOpenChange={setOpen}>
-        {/* <DialogTrigger>Open</DialogTrigger> */}
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you sure ?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-              <span className=" mt-4 flex justify-end gap-3">
-                <Button
-                  variant="secondary"
-                  className="w-28 "
-                  onClick={() => setOpen((prev) => !prev)}
-                >
-                  Cancel
-                </Button>
-
-                <Button
-                  variant="destructive"
-                  className="w-28 "
-                  onClick={handleDeleteUser}
-                >
-                  Confirm
-                </Button>
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </>
   );
 };
 

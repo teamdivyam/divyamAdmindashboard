@@ -132,6 +132,16 @@ const LIstOfDeliveryAreas = () => {
     getAreaLists();
   }, [state]);
 
+  if (data) {
+    if (!data.length) {
+      return (
+        <span className="block lg:mt-20 text-center font-medium text-neutral-500">
+          Oops! No area zones have been added yet 😊
+        </span>
+      );
+    }
+  }
+
   return (
     <div>
       <Toaster richColors />

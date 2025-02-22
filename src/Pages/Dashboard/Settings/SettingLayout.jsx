@@ -1,7 +1,5 @@
 import React from "react";
-import { Switch } from "@components/components/ui/switch";
 import { NavLink, Outlet } from "react-router-dom";
-import APP from "../../../../dataCred.js";
 
 const Setting_Layout = () => {
   return (

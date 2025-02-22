@@ -4,8 +4,6 @@ import { Navigate } from "react-router-dom";
 import { isAuth } from "../../store/Auth/Authentication";
 
 const ProtectedRoute = ({ children }) => {
-  const dispatch = useDispatch();
-
   const token = useMemo(() => localStorage.getItem("AppID"), []);
 
   if (token) {
