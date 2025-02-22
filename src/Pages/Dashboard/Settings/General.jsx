@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Switch } from "@components/components/ui/switch";
-import { NavLink } from "react-router-dom";
 import APP from "../../../../dataCred.js";
 import { toggleDarkMode } from "../../../store/Theme/themeSlice.js";
 import { useSelector, useDispatch } from "react-redux";

@@ -10,11 +10,13 @@ import {
   ShoppingBasket,
   Group,
   LocateFixed,
+  Bike,
 } from "lucide-react";
 import { NavMain } from "@components/components/nav-main";
 import { NavProjects } from "@components/components/nav-projects";
 import { NavUser } from "@components/components/nav-user";
 import { TeamSwitcher } from "@components/components/team-switcher";
+
 import {
   Sidebar,
   SidebarContent,
@@ -129,17 +131,29 @@ const data = {
     },
 
     {
-      title: "Manager",
+      title: "Employee",
       url: "#",
       icon: UserCog,
       items: [
         {
-          title: "Manager",
-          url: `${APP?.APP_URL}/dashboard/manager`,
+          title: "Employee",
+          url: `${APP?.APP_URL}/dashboard/employee`,
         },
         {
-          title: "New Manager",
-          url: `${APP?.APP_URL}/dashboard/new-manager`,
+          title: "New Employee",
+          url: `${APP?.APP_URL}/dashboard/new-employee`,
+        },
+      ],
+    },
+
+    {
+      title: "Delivery Agents",
+      url: "#",
+      icon: Bike,
+      items: [
+        {
+          title: "Delivery Agents",
+          url: `${APP?.APP_URL}/dashboard/delivery-agents`,
         },
       ],
     },

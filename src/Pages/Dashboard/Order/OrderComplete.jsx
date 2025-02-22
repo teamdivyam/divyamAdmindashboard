@@ -67,7 +67,7 @@ const Reducer = (state, action) => {
 };
 
 const OrderPending = () => {
-  const [pendingOrders, setPendingOrder] = useState(null);
+  const [completedOrders, setCompletedOrders] = useState(null);
   const getTOKEN = localStorage.getItem("AppID");
   const [state, dispatch] = useReducer(Reducer, init);
 
@@ -98,7 +98,7 @@ const OrderPending = () => {
 
         const data = await res.json();
 
-        setPendingOrder(data);
+        setCompletedOrders(data);
         // if (data.length == 0) {
         //   toast.error("no data available.");
         // }
@@ -109,6 +109,17 @@ const OrderPending = () => {
 
     fetchData();
   }, [state.page, state.limit]);
+
+  if (completedOrders) {
+    if (!completedOrders.length) {
+      return (
+        <span className="block lg:mt-20 text-center font-medium text-neutral-500">
+          Oops! There's no data to show right now. It looks like no orders are
+          available 😊
+        </span>
+      );
+    }
+  }
 
   return (
     <div className="w-full">
@@ -127,8 +138,8 @@ const OrderPending = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {pendingOrders &&
-            pendingOrders.responseData.map((order) => {
+          {completedOrders &&
+            completedOrders.responseData.map((order) => {
               const date = new Date(order.order_date);
               const day = String(date.getDate()).padStart(2, "0");
               const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed

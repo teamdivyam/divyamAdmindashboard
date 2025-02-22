@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/components/ui/Button";
 import { Input } from "@components/components/ui/input";
 import { Label } from "@components/components/ui/label";
 import { Textarea } from "@components/components/ui/textarea";
 import { Info } from "lucide-react";
-
 import { UserRoundPlus } from "lucide-react";
 
 import {
@@ -19,6 +18,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from "@components/components/ui/select";
 
 import { useForm } from "react-hook-form";
@@ -42,9 +42,11 @@ const CREATE_NEW_EMPLOYEE_SCHEMA_VALIDATION = yup.object({
     .trim()
     .length(10)
     .required("Phone number is required.."),
+  role: yup.string().min(3).max(20).required("role is required field"),
   email: yup.string().email().required("email address is required"),
   dob: yup.string().required("date of birth is required"),
   pinCode: yup.string().length(6).required("area pin code is required"),
+  assignedPinCodesLists: yup.array(),
   address: yup.string().max(100).required("employee address is required"),
   profile: yup
     .mixed()
@@ -60,7 +62,7 @@ const CREATE_NEW_EMPLOYEE_SCHEMA_VALIDATION = yup.object({
     }),
 });
 
-const CreateNewManager = () => {
+const CreateNewEmployee = () => {
   const [date, setDate] = useState();
   const [showUserCred, setUserCred] = useState(false);
   const [gender, setGender] = useState();
@@ -74,32 +76,41 @@ const CreateNewManager = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     mode: "all",
     resolver: yupResolver(CREATE_NEW_EMPLOYEE_SCHEMA_VALIDATION),
     defaultValues: {
       fullName: "",
+      role: "",
       gender: "",
       mobileNum: "",
       email: "",
       dob: "",
       pinCode: "",
       address: "",
-      areaPinCodes: "",
+      assignedPinCodesLists: "",
     },
   });
+
+  console.log(watch());
 
   const getTOKEN = localStorage.getItem("AppID");
 
   const onsubmit = (data) => {
-    console.log(data.pinCode);
-    // Prepare data to send on backend..
+    console.log(data);
+    //Prepare data to send on backend..
     const formData = new FormData();
-    // set pinCode on useForm
-    formData.append("pinCodes", data.areaPinCodes);
+    //set pinCode on useForm
+
+    //formData.append("assignedPinCodesLists", data.areaPinCodes);
+    data.assignedPinCodesLists.map((pinCode) => {
+      formData.append("assignedPinCodesLists[]", pinCode);
+    });
 
     formData.append("fullName", data.fullName);
+    formData.append("role", data.role);
     formData.append("dob", data.dob);
     formData.append("gender", data.gender);
     formData.append("email", data.email);
@@ -109,18 +120,20 @@ const CreateNewManager = () => {
     formData.append("address", data.address);
 
     // SEND DATA ON BACKEND
+
     const postDATA = async (data) => {
+      console.log(data);
       try {
-        const res = await fetch(`${APP.BACKEND_URL}/api/admin/new-employee/`, {
+        const res = await fetch("http://localhost:3000/api/admin/employee", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${getTOKEN}`,
-            // "Content-Type": "application/json",
-            // Accept: "application/json, application/xml",
-            // "Accept-Language": "en_US",
+            "Content-Type": "application/json",
           },
           body: formData,
         });
+
+        console.log(res);
 
         const result = await res.json();
 
@@ -153,17 +166,17 @@ const CreateNewManager = () => {
     const pinCodesArr = pinCodes.map((item, idx) => {
       return [item.value];
     });
-
     // console.log("Available pin Array", pinCodesArr);
-
-    setValue("areaPinCodes", pinCodesArr);
+    setValue("assignedPinCodesLists", pinCodesArr);
     // setValue();
   };
+
+  // http://localhost:3008/api/admin/areas
 
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const res = await fetch("http://localhost:3006/api/admin/areas");
+        const res = await fetch(`${APP && APP.BACKEND_URL}/api/admin/areas`);
         if (!res.ok) {
           throw new Error("Failed to fetch pin codes");
         }
@@ -175,6 +188,7 @@ const CreateNewManager = () => {
               label: `${item.areaPinCode} ${item.district}`,
             };
           });
+
           setPinCodesData(formattedData);
         }
       } catch (error) {
@@ -192,13 +206,15 @@ const CreateNewManager = () => {
         className="bg-neutral-100 dark:bg-gray-700 rounded-lg border p-6 mx-auto w-1/2"
         id="oderPreview"
       >
-        <div className="cardHeader w-full">
+        <div className="cardHeader w-full ">
           <h1 className="border-b pb-2  font-medium">
-            <span className="flex items-end gap-2">
+            <span className="flex items-center  gap-2">
               <span className="bg-orange-300 rounded-md p-2">
                 <UserRoundPlus className="bg-orange-300 text-white" />
               </span>
-              <span className="text-3xl">Manager</span>
+              <span className="text-3xl font-light uppercase opacity-40 text-slate-600">
+                Create new Employee
+              </span>
             </span>
           </h1>
         </div>
@@ -234,7 +250,7 @@ const CreateNewManager = () => {
                     <div
                       className={`${
                         errors?.fullName
-                          ? "block text-red-400 text-sm errMsgStyle"
+                          ? "block text-red-400 text-sm errMsgStyle capitalize"
                           : "text-red-400 text-sm errMsgStyle hidden"
                       } `}
                     >
@@ -285,6 +301,23 @@ const CreateNewManager = () => {
                   </div>
 
                   <div className="grid gap-2 w-full my-4">
+                    <Label>Choose role</Label>
+                    <Select
+                      onValueChange={(value) => {
+                        setValue("role", value, { shouldValidate: true });
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Manager" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="manager">Manager</SelectItem>
+                        <SelectItem value="supervisor">Supervisor</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid gap-2 w-full my-4">
                     <Label htmlFor="mobileNum">
                       <div className="labelText flex  ">
                         Mobile number
@@ -304,7 +337,7 @@ const CreateNewManager = () => {
                     <div
                       className={`${
                         errors?.mobileNum
-                          ? "block text-red-400 text-sm errMsgStyle"
+                          ? "block capitalize text-red-400 text-sm errMsgStyle"
                           : "text-red-400 text-sm errMsgStyle hidden"
                       } `}
                     >
@@ -332,11 +365,13 @@ const CreateNewManager = () => {
                     <div
                       className={`${
                         errors?.email
-                          ? "block text-red-400 text-sm errMsgStyle"
+                          ? "block capitalize text-red-400 text-sm errMsgStyle"
                           : "text-red-400 text-sm errMsgStyle hidden"
                       } `}
                     >
-                      {errors?.email ? errors.email?.message : "."}
+                      <span className="capitalize">
+                        {errors?.email ? errors.email?.message : "."}
+                      </span>
                     </div>
                   </div>
                   <div className="grid gap-2 w-full my-4">
@@ -345,7 +380,7 @@ const CreateNewManager = () => {
                         Profile image
                         <span className="text-red-400 mt-[3.5px] pl-1">*</span>
                       </div>
-                    </Label>{" "}
+                    </Label>
                     <input
                       type="file"
                       id="profile"
@@ -355,7 +390,7 @@ const CreateNewManager = () => {
                     <div
                       className={`${
                         errors?.profile
-                          ? "block text-red-400 text-sm errMsgStyle"
+                          ? "block capitalize text-red-400 text-sm errMsgStyle"
                           : "text-red-400 text-sm errMsgStyle hidden"
                       } `}
                     >
@@ -381,7 +416,7 @@ const CreateNewManager = () => {
                     <div
                       className={`${
                         errors?.dob
-                          ? "block text-red-400 text-sm errMsgStyle"
+                          ? "block capitalize text-red-400 text-sm errMsgStyle"
                           : "text-red-400 text-sm errMsgStyle hidden"
                       } `}
                     >
@@ -421,12 +456,14 @@ const CreateNewManager = () => {
                     />
                     <div
                       className={`${
-                        errors?.pinCode
-                          ? "block text-red-400 text-sm errMsgStyle"
+                        errors?.assignedPinCodesLists
+                          ? "block capitalize text-red-400 text-sm errMsgStyle"
                           : "text-red-400 text-sm errMsgStyle hidden"
                       } `}
                     >
-                      {errors?.pinCode ? errors.pinCode?.message : "."}
+                      {errors?.assignedPinCodesLists
+                        ? errors.assignedPinCodesLists?.message
+                        : "."}
                     </div>
                   </div>
 
@@ -449,7 +486,7 @@ const CreateNewManager = () => {
                     <div
                       className={`${
                         errors?.pinCode
-                          ? "block text-red-400 text-sm errMsgStyle"
+                          ? "block capitalize text-red-400 text-sm errMsgStyle"
                           : "text-red-400 text-sm errMsgStyle hidden"
                       } `}
                     >
@@ -473,7 +510,7 @@ const CreateNewManager = () => {
                     <div
                       className={`${
                         errors?.address
-                          ? "block text-red-400 text-sm errMsgStyle"
+                          ? "block capitalize text-red-400 text-sm errMsgStyle"
                           : "text-red-400 text-sm errMsgStyle hidden"
                       } `}
                     >
@@ -494,4 +531,4 @@ const CreateNewManager = () => {
   );
 };
 
-export default CreateNewManager;
+export default CreateNewEmployee;

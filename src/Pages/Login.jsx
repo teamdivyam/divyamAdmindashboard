@@ -74,7 +74,7 @@ const LoginPage = () => {
     setLogIn();
   };
 
-  const token = useMemo(() => localStorage.getItem("AppID"));
+  const token = useMemo(() => localStorage.getItem("AppID"), []);
 
   useEffect(() => {
     if (token) {
