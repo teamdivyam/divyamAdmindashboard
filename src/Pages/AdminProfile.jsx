@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+
 import { Badge } from "@components/components/ui/badge";
+
 import {
   UserCog,
   ShieldCheck,
@@ -9,24 +11,28 @@ import {
   Phone,
 } from "lucide-react";
 
-import APP from "../../dataCred.js";
+import { config } from "../../config.js";
 
 const AdminProfile = () => {
   const [adminData, setAdminData] = useState(null);
+
   useEffect(() => {
     const getTOKEN = localStorage.getItem("AppID");
 
     const fetchAdminData = async () => {
       try {
-        const res = await fetch(`${APP && APP.BACKEND_URL}/api/admin/profile`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${getTOKEN}`,
-            "Content-Type": "application/json",
-            Accept: "application/json, application/xml",
-            "Accept-Language": "en_US",
-          },
-        });
+        const res = await fetch(
+          `${config && config.BACKEND_URL}/api/admin/profile`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${getTOKEN}`,
+              "Content-Type": "application/json",
+              Accept: "application/json, application/xml",
+              "Accept-Language": "en_US",
+            },
+          }
+        );
         const data = await res.json();
 
         if (res.ok) {
@@ -64,10 +70,10 @@ const AdminProfile = () => {
       <div className="cardBody bg-white dark:bg-slate-800 rounded-md border p-6 mt-6">
         <div className="userProfile flex flex-row ">
           <img
-            src={`${APP && APP.IMG_PATH}/Uploads/admins/${
+            src={`${config && config.IMAGE_CDN}/Uploads/admins/${
               adminData && adminData.avatar
             }`}
-            className=" rounded-full shadow-lg size-24"
+            className=" rounded-full shadow-lg size-24 object-cover"
           />
 
           {/* <img

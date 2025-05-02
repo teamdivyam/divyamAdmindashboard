@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Badge } from "@components/components/ui/badge";
-import { Button } from "@components/components/ui/Button";
-import { Toaster } from "@components/components/ui/sonner";
-import { toast } from "sonner";
-import { nanoid } from "@reduxjs/toolkit";
+import { Button } from "@components/components/ui/button";
+
+import { Toaster } from "../../../components/components/ui/sonner.js";
 
 import {
   MapPin,
@@ -62,7 +61,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@components/components/ui/dialog";
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 
 const SingleDeliveryAgent = () => {
   const [open, setOpen] = useState();
@@ -71,11 +70,21 @@ const SingleDeliveryAgent = () => {
   const [responseData, setResponseData] = useState();
   const [showOrders, setShowOrders] = useState();
 
+  const getTOKEN = localStorage.getItem("AppID") || undefined;
+
   useEffect(() => {
     const getDATA = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/agent/${AGENT_ID}`
+          `${config && config.BACKEND_URL}/api/admin/agent/${AGENT_ID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${getTOKEN}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              "Accept-Language": "en_US",
+            },
+          }
         );
         if (!res.ok) {
           throw new Error("Error occurred during fetch");
@@ -101,7 +110,7 @@ const SingleDeliveryAgent = () => {
     const DELETE_AGENTS = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/agent/${AGENT_ID}`,
+          `${config && config.BACKEND_URL}/api/admin/agent/${AGENT_ID}`,
           {
             method: "DELETE",
           }

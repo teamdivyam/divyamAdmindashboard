@@ -7,6 +7,7 @@ import { Textarea } from "@components/components/ui/textarea";
 import { Badge } from "@components/components/ui/badge";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
+
 import {
   Dialog,
   DialogContent,
@@ -16,12 +17,25 @@ import {
   DialogTrigger,
 } from "@components/components/ui/dialog";
 
-import Dropzone from "shadcn-dropzone";
-import APP from "../../../../dataCred.js";
+import { Switch } from "@components/components/ui/switch";
+import ReactStars from "react-rating-stars-component";
+import { config } from "../../../../config.js";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { Check, CirclePlus, CloudFog, X } from "lucide-react";
+import GalleryGrid from "./components/ImageGrid/GalleryGrid.jsx";
+import ModalUploadFiles from "./components/Modal.jsx";
+import HandleMultiFileBannerImg from "./components/ImageGrid/UpdateImg/HandleMultiFile-BannerImages.jsx";
+import HandleMultiFileProductImg from "./components/ImageGrid/UpdateImg/HandleMultiFIleProductImg.jsx";
+import {
+  uploadSingleImg,
+  uploadSingleProductImg,
+} from "../../../store/UploadImages/uploadImageSlice.js";
+import { useDispatch, useSelector } from "react-redux";
+import { NumericFormat } from "react-number-format";
+import fileSize from "../../../utils/fileSize";
+import getFileNameFromImgURL from "../../../utils/extractFileNameFromImgUrl.js";
 
 const initialState = {
   name: "",
@@ -30,6 +44,11 @@ const initialState = {
   notes: "",
   description: "",
   packageListTextItems: [],
+  productImgs: [],
+  bannerImgs: [],
+  startCount: null,
+  isVisible: null,
+  isFeatured: null,
 };
 const PACKAGE_UPDATE_VALIDATE_SCHEMA = yup.object({
   name: yup.string(),
@@ -62,6 +81,17 @@ const Reducer = (state, action) => {
       return { ...state, description: action.payload };
     }
 
+    case "SET_BANNER_IMG": {
+      return { ...state, bannerImgs: action.payload };
+    }
+
+    case "SET_PRODUCT_IMG": {
+      return { ...state, productImgs: action.payload };
+    }
+    case "SET_STAR_RATING": {
+      return { ...state, startCount: action.payload };
+    }
+
     case "ADD_PKG_TXT": {
       const newItems = Array.isArray(action.payload)
         ? action.payload
@@ -87,29 +117,14 @@ const Reducer = (state, action) => {
       };
     }
 
-    default: {
-      return state;
-    }
-  }
-};
-const initialFileState = {
-  fileSize: "",
-  fileName: "",
-  fileType: "",
-};
-
-const fileReducers = (state, action) => {
-  switch (action.type) {
-    case "SET_FILE_SIZE": {
-      return { ...state, fileSize: action.payload };
+    case "IS_VISIBLE": {
+      return { ...state, isVisible: action.payload };
     }
 
-    case "SET_FILE_NAME": {
-      return { ...state, fileName: action.payload };
+    case "IS_PKG_FEATURED": {
+      return { ...state, isFeatured: action.payload };
     }
-    case "SET_FILE_TYPE": {
-      return { ...state, fileType: action.payload };
-    }
+
     default: {
       return state;
     }
@@ -118,17 +133,21 @@ const fileReducers = (state, action) => {
 
 const ViewPackage = () => {
   const { PKG_ID } = useParams();
-  const navigate = useNavigate();
+  const bannerImgState = useSelector((state) => state.UploadedImgs.banners);
 
-  const [state, dispatch] = useReducer(Reducer, initialState);
-  const [open, setOpen] = useState(false);
-  const [openUploadImgDialog, setOpenUploadImgDialog] = useState(false);
-
-  const [fileState, dispatchFileState] = useReducer(
-    fileReducers,
-    initialFileState
+  const productImgState = useSelector(
+    (state) => state.UploadedImgs.productImages
   );
 
+  const dispatchReduxState = useDispatch();
+  const [state, dispatch] = useReducer(Reducer, initialState);
+  // to store package-response
+  const [open, setOpen] = useState(false);
+
+  //for product-img-model
+  const [isProductModelOpen, setProductImgModel] = useState();
+  //for product-banner-model
+  const [isProductBannerModelOpen, setProductBannerModelOpen] = useState();
   const {
     register,
     handleSubmit,
@@ -144,51 +163,68 @@ const ViewPackage = () => {
       price: "",
       notes: "",
       description: "",
-      image: "",
     },
   });
 
   const getTOKEN = localStorage.getItem("AppID");
 
+  const bannerImagesARR = bannerImgState.map((item, idx) => {
+    return {
+      order: idx + 1,
+      imgUrl: item.imgUrl,
+      filename: item.filename,
+      fileSize: item.fileSize,
+      imageType: item.imageType,
+      imagePath: getFileNameFromImgURL(item.imgUrl),
+    };
+  });
+
+  const productImagesARR = productImgState.map((item, idx) => {
+    return {
+      order: idx + 1,
+      imgUrl: item.imgUrl,
+      filename: item.filename,
+      fileSize: item.fileSize,
+      imageType: item.imageType,
+      imagePath: getFileNameFromImgURL(item.imgUrl),
+    };
+  });
+
   const onSubmit = (data) => {
-    const formData = new FormData();
+    const payload = {
+      ...data,
+      isFeaturedProduct: state.isFeatured,
+      packageListTextItems: state.packageListTextItems,
+      rating: state.startCount,
+      bannerImgs: bannerImagesARR,
+      productImgs: productImagesARR,
+      isVisible: state.isVisible,
+    };
 
-    formData.append("name", data.name);
-    formData.append("capacity", data.capacity);
-    formData.append("price", data.price);
-    formData.append("description", data.description);
-    formData.append("notes", data.notes);
-    formData.append("policy", "not available..");
-
-    state.packageListTextItems.forEach((item) => {
-      formData.append("packageListTextItems[]", item);
-    });
-    if (data.image && data.image.length > 0) {
-      formData.append("image", data.image[0]);
-    }
-
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
+    // state.packageListTextItems.forEach((item) => {
+    //   formData.append("packageListTextItems[]", item);
+    // });
 
     const updatePKG = async () => {
       try {
         const res = await fetch(
-          `${APP.BACKEND_URL}/api/admin/package/${PKG_ID}`,
+          `${config.BACKEND_URL}/api/admin/package/${PKG_ID}`,
           {
             method: "PATCH",
             headers: {
               Authorization: `Bearer ${getTOKEN}`,
+              "Content-Type": "application/json",
             },
-            body: formData,
+            body: JSON.stringify(payload),
           }
         );
 
         if (!res.ok) {
-          toast.error(result?.msg);
+          toast.error("Something went wrong please try again later.");
         }
 
         const result = await res.json();
+
         if (result?.success === true) {
           toast.success("Package updated successfully");
         }
@@ -235,29 +271,15 @@ const ViewPackage = () => {
     restPackageListForm();
   };
 
-  const uploadedFileSize = useMemo(() => {
-    function formatFileSize(bytes) {
-      if (bytes < 1024) {
-        return `${bytes} bytes`;
-      } else if (bytes < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(2)} KB`;
-      } else if (bytes < 1024 * 1024 * 1024) {
-        return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-      } else {
-        return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-      }
-    }
-
-    if (!fileState && !fileState.fileSize) return;
-    const rawFileSize = fileState?.fileSize;
-    return formatFileSize(rawFileSize);
-  }, [fileState.fileSize]);
+  const handleStartRatingChange = (startCOUNT) => {
+    dispatch({ type: "SET_STAR_RATING", payload: startCOUNT });
+  };
 
   useEffect(() => {
     const getData = async () => {
       try {
         const response = await fetch(
-          `${APP.BACKEND_URL}/api/admin/package/${PKG_ID}`,
+          `${config.BACKEND_URL}/api/admin/package/${PKG_ID}`,
           {
             method: "GET",
             headers: {
@@ -278,9 +300,14 @@ const ViewPackage = () => {
         dispatch({ type: "ADD_PRICE", payload: data.price });
         dispatch({ type: "ADD_NOTES", payload: data.notes });
         dispatch({ type: "ADD_DESC", payload: data.description });
-        dispatch({ type: "IMG", payload: data?.images });
-
-        // console.log(data?.packageListTextItems);
+        dispatch({ type: "SET_PRODUCT_IMG", payload: data?.productImg });
+        dispatch({ type: "SET_BANNER_IMG", payload: data?.productBannerImgs });
+        dispatch({ type: "IS_VISIBLE", payload: data?.isVisible });
+        dispatch({ type: "IS_PKG_FEATURED", payload: data?.isFeatured });
+        dispatch({
+          type: "SET_STAR_RATING",
+          payload: data?.rating,
+        });
 
         // ADD PKG TXT ITEM
         data?.packageListTextItems.forEach((item) => {
@@ -303,44 +330,70 @@ const ViewPackage = () => {
     getData();
   }, []);
 
+  const toggleBannerImgModal = () => {
+    setProductBannerModelOpen((p) => !p);
+  };
+
+  const toggleProductImgModal = () => {
+    setProductImgModel((p) => !p);
+  };
+
+  // dispatch-all-already-uploaded-imags
+  useEffect(() => {
+    const bannerImgs = state.bannerImgs;
+    const productImgs = state.productImgs;
+
+    bannerImgs.map((img) => {
+      const payload = {
+        imgUrl: img.imgSrc,
+        fileName: img.title,
+        fileSize: "undefined",
+        order: img.order,
+      };
+
+      dispatchReduxState(uploadSingleImg(payload));
+    });
+
+    productImgs.map((img) => {
+      const payload = {
+        imgUrl: img.imgSrc,
+        fileName: img.title,
+        fileSize: "undefined",
+        order: img.order,
+      };
+
+      dispatchReduxState(uploadSingleProductImg(payload));
+    });
+  }, [state.bannerImgs, state.productImgs]);
+
   return (
     <div>
-      <Dialog open={openUploadImgDialog} onOpenChange={setOpenUploadImgDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Upload images</DialogTitle>
-            <DialogDescription>
-              <span className="border block p-12 rounded-md bg-orange-100 w-full h-auto">
-                <Dropzone
-                  onDrop={(acceptedFiles) => {
-                    dispatchFileState({
-                      type: "SET_FILE_SIZE",
-                      payload: acceptedFiles[0]?.size,
-                    });
+      <ModalUploadFiles
+        isModalOpen={isProductBannerModelOpen}
+        id="update-product-banner-images"
+      >
+        <HandleMultiFileBannerImg
+          Images={state.bannerImgs}
+          ToggleModal={toggleBannerImgModal}
+          Title="Update Banner Images"
+        />
+      </ModalUploadFiles>
+      {/* END_MODAL */}
 
-                    // dispatch file name
-                    dispatchFileState({
-                      type: "SET_FILE_NAME",
-                      payload: acceptedFiles[0]?.name,
-                    });
-
-                    setValue("image", acceptedFiles[0]);
-                  }}
-                  accept="image/*"
-                />
-              </span>
-              <span className="file-info">
-                <span className="flex gap-4 mt-3">
-                  {fileState.fileName && <span>{fileState.fileName}</span>}
-                  {fileState.fileSize && <span>Size:{uploadedFileSize}</span>}
-                </span>
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <ModalUploadFiles
+        isModalOpen={isProductModelOpen}
+        id="update-product-modal-images"
+      >
+        <HandleMultiFileProductImg
+          Images={state.productImg}
+          ToggleModal={toggleProductImgModal}
+          Title="Update Product Images"
+        ></HandleMultiFileProductImg>
+      </ModalUploadFiles>
+      {/* END_MODAL */}
 
       <Toaster richColors />
+
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -414,32 +467,38 @@ const ViewPackage = () => {
           className="bg-gray-200 p-6 w-96 h-auto rounded-lg "
           id="preview_package"
         >
-          {state?.image ? (
-            <img
-              loading="lazy"
-              src={`${APP && APP.IMG_PATH}/Uploads/package/${state.image}`}
-              alt="Package"
-              className="w-full rounded-lg"
-              onError={(e) =>
-                (e.currentTarget.src =
-                  "https://placehold.co/280x200?text=Not%20available")
-              }
-            />
-          ) : (
-            <p className="text-gray-500">Can't get image</p>
-          )}
-
-          <Button
-            className="w-full mt-2 hidden"
-            variant="secondary"
-            onClick={() => setOpenUploadImgDialog(!openUploadImgDialog)}
-          >
-            Change uploaded images
-          </Button>
           <span className="textPackage">
-            <h3 className="mt-4 font-medium text-2xl text-wrap">
+            <h3 className="mb-4 font-semibold text-2xl text-wrap capitalize">
               {state && state.name}
             </h3>
+
+            <h2 className=" font-normal text-neutral-600 border-b">
+              Product Images
+            </h2>
+
+            <GalleryGrid Images={state.productImgs} />
+
+            <h2 className="font-normal text-neutral-600 border-b">
+              Banners Images
+            </h2>
+            <GalleryGrid Images={state.bannerImgs} />
+
+            <div className="w-full flex justify-between mx-auto mt-8 gap-4">
+              <Button
+                onClick={() => setProductImgModel(true)}
+                className="w-1/2 bg-stone-300 text-stone-600 hover:bg-stone-300 capitalize
+              font-medium text-xs "
+              >
+                Update product images
+              </Button>
+              <Button
+                onClick={() => setProductBannerModelOpen(true)}
+                className="w-1/2 bg-stone-300 text-stone-600 hover:bg-stone-300 capitalize
+              font-medium text-xs "
+              >
+                Update Banner images
+              </Button>
+            </div>
 
             {/* Price and Capacity */}
             <div className="price_Cap">
@@ -449,7 +508,14 @@ const ViewPackage = () => {
                   className="bg-orange-500 hover:bg-gray-700"
                 >
                   Price:
-                  {state && `  ${state.price}`}
+                  {state && (
+                    <NumericFormat
+                      value={state.price}
+                      displayType={"text"}
+                      thousandSeparator={true}
+                      prefix={"₹"}
+                    />
+                  )}
                 </Badge>
 
                 <Badge
@@ -555,6 +621,19 @@ const ViewPackage = () => {
                 </div>
               </div>
 
+              <div className=" grid gap-2 startRatingsCount">
+                <Label htmlFor="notes">Ratings</Label>
+                {state && state?.startCount ? (
+                  <ReactStars
+                    count={5}
+                    onChange={handleStartRatingChange}
+                    size={24}
+                    value={state?.startCount}
+                    color2={"#ffd700"}
+                  />
+                ) : null}
+              </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="notes">Notes or Policy</Label>
                 <Textarea
@@ -566,6 +645,45 @@ const ViewPackage = () => {
                     dispatch({ type: "ADD_NOTES", payload: e.target.value });
                   }}
                 />
+              </div>
+
+              {/* SWITCH_FOR_TOGGLE_ISFEATURED */}
+              <div className="grid gap-2">
+                <div className=" rounded-md border p-3 flex justify-between items-center gap-4 shadow-sm">
+                  <div>
+                    <h2 className="font-normal">Show in Featured Section</h2>
+                    <p className="text-xs font-sm">
+                      Easily add products to the Featured category with just one
+                      click. This button helps you highlight selected products,
+                      making them stand out on your website
+                    </p>
+                  </div>
+                  <Switch
+                    checked={state && state.isFeatured}
+                    onCheckedChange={(crntVal) => {
+                      dispatch({ type: "IS_PKG_FEATURED", payload: crntVal });
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <div className=" rounded-md border p-3 flex justify-between items-center gap-4 shadow-sm">
+                  <div>
+                    <h2 className="font-normal">Product Visibility</h2>
+                    <p className="text-xs font-sm">
+                      Turn this switch on to feature this product on the
+                      customer UI. When off, the product will remain hidden from
+                      customers but still be available in your dashboard
+                    </p>
+                  </div>
+                  <Switch
+                    checked={state && state?.isVisible}
+                    onCheckedChange={(crntVal) => {
+                      dispatch({ type: "IS_VISIBLE", payload: crntVal });
+                    }}
+                  />
+                </div>
               </div>
 
               <div className="grid gap-2">

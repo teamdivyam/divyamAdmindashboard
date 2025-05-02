@@ -40,6 +40,21 @@ const Setting_Layout = () => {
               Change Password
             </li>
           </NavLink>
+
+          <NavLink
+            to="/dashboard/setting/backup"
+            end
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            <li
+              className="bg-neutral-100 bg-active-link
+                  dark:bg-slate-500
+                  dark:text-white
+           p-2 border text-black rounded-md cursor-pointer"
+            >
+              Backup & Restore
+            </li>
+          </NavLink>
         </ul>
       </div>
       <div id="wrapper-setting" className="theme border p-5 rounded-md w-full">

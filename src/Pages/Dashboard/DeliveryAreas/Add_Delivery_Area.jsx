@@ -2,14 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@components/components/ui/input";
 import { Button } from "@components/components/ui/button";
 import { Label } from "@components/components/ui/label";
-import ComboboxDemo from "../../../components/components/comboBox_select";
-
 import { districts_up, IND_state } from "./address_data.js";
 import { Search, CircleCheck, MapPin } from "lucide-react";
 import { CalendarDatePicker } from "@components/components/ui/calendar-date-picker";
+import { config } from "../../../../config.js";
+
+// import { toast } from "../../../components/components/ui/sonner.js";
 import { Toaster } from "@components/components/ui/sonner";
-import { toast } from "sonner";
-import APP from "../../../../dataCred.js";
 
 import {
   Dialog,
@@ -19,11 +18,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/components/ui/dialog";
-
 import { Switch } from "@components/components/ui/switch";
-
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   setAreaPinCode,
   setEndDate,
@@ -35,6 +33,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 const areaPinRegex = /^[1-9]{1}[0-9]{5}$/;
+
+import ComboboxDemo from "@components/components/ComboBox_select";
+import { toast } from "sonner";
 
 function formatDateInCustomTimeZone(dateString) {
   const date = new Date(dateString);
@@ -155,7 +156,6 @@ const Add_Delivery_Area = () => {
   const getToken = localStorage.getItem("AppID");
 
   // console.log("Watching...", watch());
-
   // Display all the error message via toast on the UI
 
   if (formState.errors) {
@@ -204,7 +204,7 @@ const Add_Delivery_Area = () => {
     const SUBMIT_DATA_ON_SERVER = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/areas-zone`,
+          `${config && config.BACKEND_URL}/api/admin/areas-zone`,
           {
             method: "POST",
             headers: {
@@ -217,14 +217,22 @@ const Add_Delivery_Area = () => {
           }
         );
 
+        if (res.ok) {
+          toast.success("New area zone created successfully.");
+          setConfirmOpen(false);
+        }
+
+        if (!res.ok) {
+          setConfirmOpen(false);
+          toast.error(
+            "Please check your internet connection or fill the form carefully"
+          );
+        }
+
         const result = await res.json();
 
         if (!result.success) {
           toast.error(result?.msg);
-        }
-
-        if (result.success) {
-          toast.success("New area zone created successfully.");
         }
       } catch (error) {
         console.log(error);
@@ -319,8 +327,7 @@ const Add_Delivery_Area = () => {
 
               <NavLink
                 target="_blank"
-                to={`https://www.google.com/maps/search/${inputPinCode?.current?.value}
-`}
+                to={`https://www.google.com/maps/search/${inputPinCode?.current?.value}`}
                 className="w-full block h-10 mt-4 p-2 rounded-md border  bg-gray-300"
               >
                 <span className="flex justify-center items-center gap-2">

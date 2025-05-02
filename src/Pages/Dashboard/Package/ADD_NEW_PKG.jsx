@@ -7,7 +7,9 @@ import { Badge } from "@components/components/ui/badge";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
 import { CirclePlus, X, Check } from "lucide-react";
-import Dropzone from "shadcn-dropzone";
+import ModalUploadFiles from "./components/Modal.jsx";
+import ReactStars from "react-rating-stars-component";
+
 import {
   Dialog,
   DialogContent,
@@ -27,19 +29,6 @@ const ADD_NEW_PKG_VALIDATE_SCHEMA = yup.object({
   description: yup.string().required("description is required."),
   notes: yup.string(),
   policy: yup.string(),
-  image: yup
-    .mixed()
-    .required("File is required")
-    .test(
-      "fileSize",
-      "File too large",
-      (value) => value && value[0]?.size <= 5000000
-    )
-    .test(
-      "fileType",
-      "Unsupported file format",
-      (value) => value && ["image/jpeg", "image/png"].includes(value[0]?.type)
-    ),
 });
 
 // state for reducers..
@@ -52,7 +41,11 @@ const initialState = {
   file: "",
 };
 
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
+import HandleMultiFileUpload from "./components/HandleMultiFile-BannerUploads.jsx";
+import HandleMultiFileProductImagesUploads from "./components/HandleMultiFile-ProductImages.jsx";
+import { useSelector } from "react-redux";
+import getFileNameFromImgURL from "../../../utils/extractFileNameFromImgUrl.js";
 
 const Reducer = (state, action) => {
   switch (action.type) {
@@ -81,15 +74,42 @@ const Reducer = (state, action) => {
 };
 
 // COMPONENT___
-
 const ADD_NEW_PKG = () => {
   const [state, dispatch] = useReducer(Reducer, initialState);
   const [open, setOpen] = useState(false);
   const [packageListItems, setPackageListsItem] = useState([]);
-  const [uploadedFIle, setUploadedFile] = useState(null);
-  const [uploadFilename, setUploadFileName] = useState(null);
+  const [starCount, setStartCount] = useState();
+  const [isShowBannerDiloge, setShowbannerialoge] = useState();
+  const [isShowProductDiloge, setShowProductdialoge] = useState();
+
+  const productBannerImg = useSelector((state) => state.UploadedImgs.banners);
+  const productImgs = useSelector((state) => state.UploadedImgs.productImages);
+  const productBannerImgArr = useMemo(() => {
+    const returnValue = productBannerImg.map((banner, idx) => {
+      return {
+        imgPath: getFileNameFromImgURL(banner.imgUrl),
+        order: idx + 1,
+        title: banner.filename,
+        imageType: banner.imageType,
+      };
+    });
+    return returnValue;
+  });
+
+  const productMainImg = useMemo(() => {
+    const returnValue = productImgs.map((productImg, idx) => {
+      return {
+        imgPath: getFileNameFromImgURL(productImg.imgUrl),
+        order: idx + 1,
+        title: productImg.filename,
+        imageType: productImg.imageType,
+      };
+    });
+    return returnValue;
+  });
 
   // New Package creation Validation Form
+
   const {
     register,
     handleSubmit,
@@ -107,61 +127,59 @@ const ADD_NEW_PKG = () => {
       description: "",
       notes: "",
       packageListTextItems: "",
-      image: "",
       policy: "",
-      // PackageListItems: [],
+      PackageListItems: [],
     },
   });
 
   // set value of policy empty or undefine or null
   setValue("policy", "not available");
+
   const getTOKEN = localStorage.getItem("AppID");
+
   // On SUBMIT NEW PACKAGE
   const onSubmit = (data) => {
-    console.log("----DATA_FROM_FORM", data);
+    if (!starCount) return;
+
     // Dialoge package lists item
     const pkgListsItem = packageListItems?.map((item) => {
       return item.packageItem;
     });
 
-    console.log("Package list array", pkgListsItem);
+    const payload = {
+      name: data.name,
+      description: data.description,
+      capacity: data.capacity,
+      price: Number(data.price),
+      notes: data.notes,
+      policy: data.policy,
+      packageListTextItems: pkgListsItem,
+      productBannerImgArr,
+      productMainImgArr: productMainImg,
+      rating: starCount,
+    };
 
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("capacity", data.capacity);
-    formData.append("price", data.price);
-    formData.append("description", data.description);
-    formData.append("notes", data.notes);
-    formData.append("policy", data.policy);
-
-    pkgListsItem.forEach((item) => {
-      formData.append("packageListTextItems[]", item);
-    });
-
-    if (data.image && data.image.length > 0) {
-      formData.append("image", data.image[0]);
-    }
+    // pkgListsItem.forEach((item) => {
+    //   formData.append("packageListTextItems[]", item);
+    // });
 
     // validate pkgListsItem data
     if (pkgListsItem.length <= 0) {
       toast.error("Please list can't be empty");
       return;
     }
-    // const prettyDATA = {
-    //   ...data,
-    //   packageListTextItems: pkgListsItem,
-    // };
 
     const postDataOnServer = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/package/`,
+          `${config && config.BACKEND_URL}/api/admin/package/`,
           {
             method: "POST",
             headers: {
+              "Content-Type": "application/json",
               Authorization: `Bearer ${getTOKEN}`,
             },
-            body: formData,
+            body: JSON.stringify(payload),
           }
         );
         if (!res.ok) {
@@ -207,36 +225,54 @@ const ADD_NEW_PKG = () => {
     },
   });
 
+  const ratingChanged = (starCount) => {
+    setStartCount(starCount);
+  };
+
   // ON SUBMIT OF DIALOG FORM
   const onPackageListFormSubmit = (data) => {
     // Update state
     setPackageListsItem((prev) => {
-      return [...prev, { id: Date.now(), packageItem: data?.packageItem }];
+      return [...prev, { id: Date.now(), packageItem: data.packageItem }];
     });
-    restPackageListForm();
+
+    setTimeout(() => {
+      restPackageListForm();
+    }, 100);
   };
 
-  const uploadedFileSize = useMemo(() => {
-    function formatFileSize(bytes) {
-      if (bytes < 1024) {
-        return `${bytes} bytes`;
-      } else if (bytes < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(2)} KB`;
-      } else if (bytes < 1024 * 1024 * 1024) {
-        return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-      } else {
-        return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-      }
-    }
+  const handlbannerModal = () => {
+    setShowbannerialoge((p) => !p);
+  };
 
-    if (!uploadedFIle) return;
-    const rawFileSize = uploadedFIle?.size;
-    return formatFileSize(rawFileSize);
-  }, [uploadedFIle]);
+  const handleproductModal = () => {
+    setShowProductdialoge((p) => !p);
+  };
+
+  useEffect(() => {
+    console.log("textListItems", packageListItems);
+  }, []);
 
   return (
     <>
       <Toaster richColors />
+
+      <ModalUploadFiles
+        isModalOpen={isShowBannerDiloge}
+        contentLabel="banner-ui" // Upload-product-banner-images
+        id="product-banner"
+      >
+        <HandleMultiFileUpload ToggleModal={handlbannerModal} />
+      </ModalUploadFiles>
+
+      <ModalUploadFiles
+        isModalOpen={isShowProductDiloge}
+        contentLabel="banner-ui" // Upload-product-banner-images
+        id="product-banner"
+      >
+        <HandleMultiFileProductImagesUploads ToggleModal={handleproductModal} />
+      </ModalUploadFiles>
+
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -305,32 +341,21 @@ const ADD_NEW_PKG = () => {
         </DialogContent>
       </Dialog>
 
-      <Toaster />
       <div className="p-20 flex justify-between">
         <div
           className="bg-gray-200 p-6 w-[400px] h-auto rounded-lg "
           id="preview_package"
         >
-          {/* <img src="https://picsum.photos/400" className="rounded-lg" /> */}
-          <div className="bg-zinc-100	 rounded-md p-12">
-            <Dropzone
-              onDrop={(acceptedFiles) => {
-                setValue("image", acceptedFiles);
-                setUploadedFile(acceptedFiles[0]);
-                setUploadFileName(acceptedFiles[0]?.name);
-              }}
-              multiple={false}
-              maxFiles={1}
-              accept="image/*"
-            />
-            <div className="file_info pt-2 flex gap-2">
-              {uploadFilename ? (
-                <span className="text-sm truncate">{uploadFilename}</span>
-              ) : null}
-              {uploadedFileSize ? (
-                <span className="text-sm">Size: {uploadedFileSize}</span>
-              ) : null}
-            </div>
+          <div className="flex flex-col gap-3">
+            <Button onClick={handlbannerModal} className="w-full bg-blue-400">
+              Upload Banners images
+            </Button>
+            <Button
+              onClick={handleproductModal}
+              className="w-full bg-amber-400"
+            >
+              Uplaod Product images
+            </Button>
           </div>
 
           <span className="textPackage">
@@ -413,6 +438,7 @@ const ADD_NEW_PKG = () => {
                   }}
                 />
               </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="capacity">Capacity</Label>
                 <Input
@@ -428,6 +454,7 @@ const ADD_NEW_PKG = () => {
                   }}
                 />
               </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="price">Price</Label>
                 <Input
@@ -441,6 +468,15 @@ const ADD_NEW_PKG = () => {
                   onChange={(e) => {
                     dispatch({ type: "ADD_PRICE", payload: e.target.value });
                   }}
+                />
+              </div>
+              <div className="grid-gap-2">
+                <Label htmlFor="price">Package rating</Label>
+                <ReactStars
+                  count={5}
+                  onChange={ratingChanged}
+                  size={24}
+                  activeColor="#ffd700"
                 />
               </div>
 

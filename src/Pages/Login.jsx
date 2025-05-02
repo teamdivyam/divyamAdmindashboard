@@ -1,8 +1,8 @@
 import { config } from "../../config.js";
-
 import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/components/ui/button";
-import APP from "../../dataCred.js";
+import ReCAPTCHA from "react-google-recaptcha";
+
 import {
   Card,
   CardContent,
@@ -32,6 +32,8 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state?.Auth?.isAuthenticate);
+  const [recaptchaRef, setRecaptchaRef] = useState();
+
   // Redirect user on dashboard if user is logged in
   const {
     register,
@@ -45,15 +47,25 @@ const LoginPage = () => {
 
   const [error, setError] = useState(null);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    const token = await recaptchaRef.executeAsync();
+
+    if (!token) {
+      alert("reCAPTCHA verification failed");
+      return;
+    }
+
+    const payload = { ...data, recaptchaToken: token };
+
     const setLogIn = async () => {
-      const response = await fetch(`${APP.BACKEND_URL}/api/admin/login`, {
+      const response = await fetch(`${config.BACKEND_URL}/api/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
+
       const result = await response.json();
 
       if (result.success == false) {
@@ -75,6 +87,10 @@ const LoginPage = () => {
   };
 
   const token = useMemo(() => localStorage.getItem("AppID"), []);
+
+  const handleRecaptcha = (data) => {
+    console.log("BY RECAPTCHA", data);
+  };
 
   useEffect(() => {
     if (token) {
@@ -141,6 +157,14 @@ const LoginPage = () => {
                   {errors?.password ? errors.password?.message : "."}
                 </div>
               </div>
+              {/* RE-CAPTCH */}
+              <ReCAPTCHA
+                className=""
+                size="invisible"
+                sitekey={config.REACPTCAH_KEY}
+                ref={(ref) => setRecaptchaRef(ref)}
+              />
+
               <Button type="submit" className="w-full bg-theme-color">
                 Login
               </Button>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Badge } from "@components/components/ui/badge";
-import { Button } from "@components/components/ui/Button";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
 
-import { UserRound, MapPin, Phone, Calendar } from "lucide-react";
-import APP from "../../../../dataCred.js";
+import { UserRound, MapPin, Phone, Calendar, MapPinHouse } from "lucide-react";
+import { config } from "../../../../config.js";
+import { Button } from "@components/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@components/components/ui/dialog";
+import moment from "moment";
+import SINGLE_ORDER_CARD from "./Component/OrderCard.jsx";
 
 const Gender_MALE_ICON = () => {
   return (
@@ -64,26 +66,23 @@ const VIEW_SINGLE_USER = () => {
   const [open, setOpen] = useState(false);
   const [err, setErr] = useState(true);
   const [user, setUser] = useState(null);
+
   const getTOKEN = localStorage.getItem("AppID");
 
   const handleDeleteUser = async () => {
     try {
       const res = await fetch(
-        `${APP && APP.BACKEND_URL}/api/admin/user/${USER_ID}`,
+        `${config && config.BACKEND_URL}/api/admin/user/${USER_ID}`,
         {
           method: "DELETE",
           headers: {
             "Content-type": "application/json",
             Authorization: `Bearer ${getTOKEN}`,
-            "Content-Type": "application/json",
-            Accept: "application/json, application/xml",
-            "Accept-Language": "en_US",
           },
         }
       );
 
       const result = await res.json();
-      console.log(result);
 
       if (res.ok) {
         setOpen((prev) => !prev);
@@ -96,20 +95,16 @@ const VIEW_SINGLE_USER = () => {
   };
 
   useEffect(() => {
-    const getTOKEN = localStorage.getItem("AppID");
-
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${APP.BACKEND_URL}/api/admin/user/${USER_ID}`,
+          `${config.BACKEND_URL}/api/admin/user/${USER_ID}`,
           {
             method: "GET",
             headers: {
               "Content-type": "application/json",
               Authorization: `Bearer ${getTOKEN}`,
-              "Content-Type": "application/json",
               Accept: "application/json, application/xml",
-              "Accept-Language": "en_US",
             },
           }
         );
@@ -163,10 +158,18 @@ const VIEW_SINGLE_USER = () => {
 
         <div className="cardBody bg-white dark:bg-slate-800 rounded-md border p-6 mt-6">
           <div className="userProfile flex flex-row ">
-            <img
-              src="https://i.pravatar.cc/300"
-              className="size-48 rounded-lg shadow-sm"
-            />
+            {user && user.avatar ? (
+              <img
+                src={user?.avatar}
+                className="w-[150px] h-[150px] object-cover rounded-sm shadow-sm"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://placehold.co/300x300?text=NA";
+                }}
+                alt="profile-image"
+              />
+            ) : null}
+
             <div className="profileText pt-10 pl-10">
               <h2 className="font-medium text-neutral-600 text-3xl flex items-center">
                 {user && user.fullName ? user.fullName : "Not Available"}
@@ -191,26 +194,36 @@ const VIEW_SINGLE_USER = () => {
                   "Mobile number is not available"
                 )}
               </p>
+
               <p className="age  mt-2  flex items-center  text-neutral-400">
-                {user && user.age ? (
+                {user && user.dob ? (
                   <>
                     <Calendar />
-                    <span className="pl-2 font-normal">{user.age}</span>
+                    <span className="pl-2 font-normal">
+                      {moment(user.dob).format("DD-MM-YYYY")}
+                    </span>
                   </>
                 ) : (
                   "Date of birth is not available"
                 )}
               </p>
+
+              <p className="age  mt-2  flex items-center  text-neutral-400">
+                {user && user.areaPin ? (
+                  <>
+                    <MapPinHouse />
+                    <span className="pl-2 font-normal">{user.areaPin}</span>
+                  </>
+                ) : (
+                  "Area pin code is not available"
+                )}
+              </p>
+
               <p className="mt-2 flex text-neutral-400 ">
                 {user && user.address ? (
                   <>
                     <MapPin />
-                    <span className="pl-2">
-                      {`${user.address}  `}
-                      <span className="font-medium font-">
-                        {user && user.areaPin}
-                      </span>
-                    </span>
+                    <span className="pl-2 capitalize">{`${user.address}  `}</span>
                   </>
                 ) : (
                   "user Address is not available"
@@ -218,7 +231,19 @@ const VIEW_SINGLE_USER = () => {
               </p>
             </div>
           </div>
+
+          {/* SHOW_ORDERS */}
+          <div className="customerOrders mt-4">
+            {user && user.orders ? (
+              user.orders.map((orderId) => (
+                <SINGLE_ORDER_CARD Orderid={orderId} />
+              ))
+            ) : (
+              <p>There is no orders with this user Id</p>
+            )}
+          </div>
         </div>
+
         {/* DELETE USER PROFILE */}
         <div id="userProfileDeleteAction" className="w-full flex justify-end">
           <Button

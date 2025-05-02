@@ -8,7 +8,6 @@ const ProtectedRoute = ({ children }) => {
 
   if (token) {
     return children;
-    // dispatch(isAuth());
   }
 
   return <Navigate to="/login" />;

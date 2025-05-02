@@ -1,19 +1,17 @@
 import React, { useEffect } from "react";
 import { Label } from "@components/components/ui/label";
 import copy from "copy-to-clipboard";
-import { Button } from "@components/components/ui/Button";
+import { Button } from "@components/components/ui/button";
 import { Calendar as CalendarIcon, Copy, BadgeCheck } from "lucide-react";
 import { Toaster } from "@components/components/ui/toaster";
 import { useToast } from "@components/hooks/use-toast";
 
 const ShowEmailAndPassword = ({ ResponseData }) => {
-  if (!ResponseData.responseData) {
+  if (!ResponseData) {
     return;
   }
 
   const { toast } = useToast();
-
-  const { email, password } = ResponseData?.responseData;
 
   const handleTextCopy = (text) => {
     copy(text);
@@ -41,7 +39,7 @@ const ShowEmailAndPassword = ({ ResponseData }) => {
               id="emailText"
               className="bg-white h-12 rounded-md rounded-r-none flex items-center pl-4"
             >
-              {email}
+              {ResponseData?.email}
             </div>
           </div>
           <Button
@@ -61,9 +59,10 @@ const ShowEmailAndPassword = ({ ResponseData }) => {
               id="passwordText"
               className="bg-white h-12 rounded-md rounded-r-none flex items-center pl-4"
             >
-              {password}
+              {ResponseData?.password}
             </div>
           </div>
+
           <Button
             className=" h-12 rounded-l-none bg-orange-300  bg-theme-color self-end"
             onClick={() =>
@@ -80,4 +79,4 @@ const ShowEmailAndPassword = ({ ResponseData }) => {
   );
 };
 
-export default ShowEmailAndPassword;
+export default React.memo(ShowEmailAndPassword);

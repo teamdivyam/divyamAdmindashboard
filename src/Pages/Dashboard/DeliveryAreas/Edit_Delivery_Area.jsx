@@ -4,11 +4,11 @@ import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { Toaster } from "@components/components/ui/sonner";
-import { toast } from "sonner";
+
 import { Input } from "@components/components/ui/input";
 import { Button } from "@components/components/ui/button";
 import { Label } from "@components/components/ui/label";
-import ComboboxDemo from "../../../components/components/comboBox_select";
+import ComboboxDemo from "@components/components/ComboBox_select";
 import { Search, CircleCheck, MapPin } from "lucide-react";
 import { IND_state, districts_up } from "./address_data.js";
 import { CalendarDatePicker } from "@components/components/ui/calendar-date-picker";
@@ -27,7 +27,8 @@ import * as yup from "yup";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import APP from "../../../../dataCred";
+import { config } from "../../../../config.js";
+import { toast } from "sonner";
 
 const DATE_REGEX =
   /^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$/;
@@ -173,7 +174,9 @@ const Edit_Delivery_Area = () => {
     const UPDATE_AREA_ZONE_ON_SERVER = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/areas-zone/${AREA_ZONE_ID}`,
+          `${
+            config && config.BACKEND_URL
+          }/api/admin/areas-zone/${AREA_ZONE_ID}`,
           {
             method: "PATCH",
             headers: {
@@ -208,7 +211,9 @@ const Edit_Delivery_Area = () => {
     const getDataFromServer = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/areas-zone/${AREA_ZONE_ID}`,
+          `${
+            config && config.BACKEND_URL
+          }/api/admin/areas-zone/${AREA_ZONE_ID}`,
           {
             method: "GET",
             headers: {

@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Badge } from "@components/components/ui/badge";
-import { Button } from "@components/components/ui/Button";
+import { Button } from "@components/components/ui/button";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
+import moment from "moment";
+
 import {
   Select,
   SelectContent,
@@ -18,10 +20,12 @@ import {
   ShoppingBag,
   UserRoundPen,
 } from "lucide-react";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useParams } from "react-router-dom";
+import OrderedProduct from "./components/OrderedProduct.jsx";
 
 const UPDATE_ORDER_STATUS_VALIDATE_SCHEMA = yup.object({
   status: yup
@@ -47,8 +51,7 @@ const UPDATE_ORDER_STATUS_VALIDATE_SCHEMA = yup.object({
 });
 
 const EditOrder = () => {
-  const [orderData, setOrderData] = useState(null);
-
+  const [order, setOrderData] = useState(null);
   const { ORDER_ID } = useParams();
 
   const {
@@ -72,21 +75,22 @@ const EditOrder = () => {
 
   const handleUpdateFormStatus = async () => {
     const isValid = await trigger();
+
     if (!isValid) {
       toast.error("Please fill the form carefully..");
     }
+
     const { status } = watch();
 
     const postDataOnServer = async () => {
       try {
         const res = await fetch(
-          `${APP?.BACKEND_URL}/api/admin/order/${ORDER_ID}`,
+          `${config?.BACKEND_URL}/api/admin/order/${ORDER_ID}`,
           {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${getToken}`,
-              Accept: "application/json, application/xml",
             },
             body: JSON.stringify({ status: status }),
           }
@@ -111,34 +115,18 @@ const EditOrder = () => {
     postDataOnServer();
   };
 
-  const formattedDate = useMemo(() => {
-    if (!orderData) return;
-
-    const date = new Date(orderData.createdAt);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-
-    const formattedDate = `${day}/${month}/${year}`;
-    return formattedDate;
-  }, [orderData]);
-
-  //get order status
-
   useEffect(() => {
+    const API = `${config.BACKEND_URL}/api/admin/order/${ORDER_ID}`;
+
     const fetchData = async () => {
       try {
-        const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/order/${ORDER_ID}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${getToken}`,
-              Accept: "application/json, application/xml",
-            },
-          }
-        );
+        const res = await fetch(API, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken}`,
+          },
+        });
 
         if (!res.ok) {
           toast.error("Internal error ");
@@ -146,7 +134,7 @@ const EditOrder = () => {
 
         const results = await res.json();
         // set data on state
-        setOrderData(results);
+        setOrderData(results.order);
       } catch (error) {
         toast.error(error?.message);
       }
@@ -154,6 +142,8 @@ const EditOrder = () => {
 
     fetchData();
   }, []);
+
+  if (!order) return;
 
   return (
     <>
@@ -176,12 +166,11 @@ const EditOrder = () => {
                 className="w-[10px] focus:border-orange-400 ring-orange-600"
                 onValueChange={(selectedItem) => {
                   setValue("status", selectedItem);
-                  console.log("status", selectedItem);
                 }}
               >
                 <SelectTrigger className="">
                   <SelectValue
-                    placeholder={`Update order status: ${orderData?.status}`}
+                    placeholder={`Update order status: ${order?.orderStatus}`}
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -202,63 +191,125 @@ const EditOrder = () => {
               </Select>
             </div>
           </div>
+
           {/* cardBody */}
           <div className="cardBody bg-white rounded-md border  dark:border-gray-400 p-6 mt-6 dark:bg-slate-400">
-            {[1, 2, 3, 4].map((item, id) => {
-              return (
-                <div key={id}>
-                  <div className="products mb-4  ">
-                    <div className="product hover:bg-neutral-100 text-neutral-600 flex bg-neutral-50 p-2 rounded-md dark:bg-gray-500 dark:text-white">
-                      <img
-                        src="https://ptal.in/cdn/shop/files/31_974373bd-58b3-419b-ac7f-5428d38b7075.png"
-                        className="size-16 rounded-lg"
-                      />
-                      <div className="textContent flex">
-                        <h3 className="items-start pl-10 font-medium text-md">
-                          Brass Tawa - Roti Tava in Brass
-                        </h3>
-                        <div className="items-end">Price: 565</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-
-            <div className="orderPreviewFooter dark:text-white mt-8 pt-4 border-t dark:border-t dark:border-gray-300 flex justify-between">
-              <div id="date " className="text-neutral-500 dark:text-white">
-                {orderData && formattedDate}
-              </div>
-              {true && (
-                <div className="total flex text-neutral-600 dark:text-white">
-                  <IndianRupee />
-                  <span className="font-semibold">
-                    {orderData ? orderData?.total_amount : null}
-                  </span>
-                </div>
-              )}
+            <div className="products mb-4  product-card ">
+              {order && <OrderedProduct Product={order.product} />}
             </div>
+          </div>
 
-            <div id="paymentAND_ProductDetails" className="mt-4">
-              <ul className="flex flex-col gap-3 text-neutral-500">
-                <li>
-                  {true && (
-                    <span className="flex gap-2">
-                      <CreditCard />
-                      {orderData ? orderData?.payment_method : null}
-                    </span>
-                  )}
-                </li>
+          {/* display order-info */}
+          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+            <div className="inline-block min-w-full shadow-sm rounded-sm overflow-hidden">
+              <table className="min-w-full leading-normal">
+                <tbody>
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">Name:</p>
+                    </td>
 
-                <li>
-                  {true && (
-                    <span className="flex gap-2">
-                      <ShoppingBag />
-                      {true ? "Package" : "Product"}
-                    </span>
-                  )}
-                </li>
-              </ul>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        <span className="flex items-center gap-2">
+                          <img
+                            src={`${config.IMAGE_CDN}/Uploads/users/${order.customer.avatar}`}
+                            className="size-7 rounded-full shadow-sm"
+                            onClick={() => {
+                              setIsphotoViewer((p) => !p);
+                            }}
+                          />
+                          {order.customer.fullName}
+                        </span>
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">Dob:</p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {moment(order.customer.dob).format("DD-MM-YYYY")}
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        Gender:
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {order.customer.gender}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        Payment mode:
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {order.payment.method}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        Order status
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {order.orderStatus}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        Address:
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {order?.customer?.address}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap font-semibold">
+                        Total Amount:
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap font-semibold">
+                        <span className="flex items-center">
+                          <IndianRupee className="size-4" />
+                          {order.totalAmount}
+                        </span>
+                      </p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 

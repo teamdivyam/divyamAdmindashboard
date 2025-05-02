@@ -37,7 +37,7 @@ const useFetch = (url, options) => {
         return () => {
             isMounted = false;
         };
-    }, [url, options]);
+    }, []);
 
     return { data, setData, loading, error };
 };
