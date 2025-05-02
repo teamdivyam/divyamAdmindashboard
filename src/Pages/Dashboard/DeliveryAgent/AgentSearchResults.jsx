@@ -1,17 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import DeliveryAgentCard from "./DeliveryAgentCard";
 import Loader from "../../../components/components/Loader";
+import { config } from "../../../../config.js";
 
 const AgentSearchResults = ({ SearchValue }) => {
   const [response, setResponse] = useState();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchDATA = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/admin/search?s=${SearchValue}`,
+          `${config.BACKEND_URL}/api/admin/search?s=${SearchValue}`,
           {
             method: "GET",
+            Authorization: `Bearer ${token}`,
           }
         );
         const data = await res.json();

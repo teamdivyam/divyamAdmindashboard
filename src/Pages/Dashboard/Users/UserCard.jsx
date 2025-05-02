@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 
 const UserCard = ({ User, isSearchResults }) => {
   return (
@@ -13,7 +13,12 @@ const UserCard = ({ User, isSearchResults }) => {
       }
     >
       <div className="flex flex-row">
-        <img src="https://i.pravatar.cc/300" className="size-16 rounded-full" />
+        <img
+          src={User?.avatar}
+          onError="this.onerror=null; this.src='https://placehold.co/150x150?text=NA' "
+          className="size-16 rounded-full"
+        />
+
         <div className="profileListTextContent pl-8 content-center	">
           <h3 className="font-bold">
             {User?.fullName ? User.fullName : "Not Available."}
@@ -25,7 +30,7 @@ const UserCard = ({ User, isSearchResults }) => {
       </div>
       <div className="viewMore">
         <NavLink
-          to={`${APP && APP.APP_URL}/dashboard/user/${User._id}`}
+          to={`${config && config.APP_URL}/dashboard/user/${User._id}`}
           className="text-neutral-500"
         >
           View More

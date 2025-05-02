@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import APP from "../../../../dataCred";
+import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
+import { config } from "../../../../config.js";
 import { Toaster } from "@components/components/ui/sonner";
-import { UserRound, MapPin, Phone, Calendar } from "lucide-react";
+import { UserRound, MapPin, Phone, Calendar, Trash2 } from "lucide-react";
 import { Badge } from "@components/components/ui/badge";
-import { Button } from "@components/components/ui/Button";
+import { Button } from "@components/components/ui/button";
 import { format } from "date-fns";
 
 import {
@@ -13,6 +13,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@components/components/ui/dialog";
 
 import SetSupervisorToManagerDialog from "./SelectSuperVisorDialoge/setSupervisorToManagerDialog";
@@ -63,7 +64,7 @@ const ViewManager = () => {
   const [emp, setEmp] = useState(null); //store response data in employee-state
   const { EMP_ID } = useParams();
   const navigate = useNavigate();
-  const getTOKEN = localStorage.getItem("AppID");
+  const getTOKEN = localStorage.getItem("AppID") || undefined;
   const [open, setOpen] = useState(false);
   const [showSuperVisorDialog, setShowSuperVisorDialog] = useState(false);
 
@@ -97,11 +98,41 @@ const ViewManager = () => {
     DELETE_EMP();
   };
 
+  const handleRemoveSuperVisorFromManager = (superVisor) => {
+    const UNSET_SUPERVISOR_FROM_MANGER = async () => {
+      try {
+        const response = await fetch(
+          `${config.BACKEND_URL}/api/admin/unset-supervisor`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${getTOKEN}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              managerID: EMP_ID,
+              superVisorID: superVisor._id,
+            }),
+          }
+        );
+        const results = await response.json();
+
+        if (results.success) {
+          navigate(0);
+        }
+      } catch (error) {
+        throw new Error(error);
+      }
+    };
+
+    UNSET_SUPERVISOR_FROM_MANGER();
+  };
+
   useEffect(() => {
     const fetchDATA = async () => {
       try {
         const res = await fetch(
-          `${APP.BACKEND_URL}/api/admin/employee/${EMP_ID}`,
+          `${config.BACKEND_URL}/api/admin/employee/${EMP_ID}`,
           {
             method: "GET",
             headers: {
@@ -125,6 +156,10 @@ const ViewManager = () => {
     };
     fetchDATA();
   }, []);
+
+  // useEffect(() => {
+  //   window.location.reload();
+  // }, [EMP_ID]);
 
   return (
     <>
@@ -159,7 +194,6 @@ const ViewManager = () => {
               </span>
             </Badge>
           </div>
-
           <div className="cardBody bg-white dark:bg-slate-800 rounded-md border p-6 mt-6">
             <div className="userProfile flex flex-row ">
               {/* <img
@@ -228,7 +262,6 @@ const ViewManager = () => {
               </div>
             </div>
           </div>
-
           {emp && emp?.role === "manager" ? (
             <div className="border-b mt-4  p-2 text-white">
               <h2 className="text-neutral-400 text-nowrap font-normal capitalize">
@@ -250,6 +283,42 @@ const ViewManager = () => {
               </button>
             </div>
           ) : null}
+
+          {/* http://localhost:5173/dashboard/employee/67c15e9aa3d952788ae0497f */}
+
+          <div className="flex flex-col gap-2 mt-3">
+            {emp?.supervisors &&
+              emp.supervisors.map((superVisor) => {
+                return (
+                  <div
+                    key={superVisor._id}
+                    className="bg-[#BE9E882D]   p-2 flex rounded-md justify-between items-center"
+                  >
+                    <a
+                      className="cursor-pointer"
+                      onClick={() => {
+                        window.location.href = `/dashboard/employee/${superVisor._id}`;
+                      }}
+                    >
+                      <h4 className="capitalize tex-md font-medium text-neutral-500">
+                        {superVisor?.fullName}
+                      </h4>
+                    </a>
+
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="bg-red-500 hover:bg-red-400 border-0"
+                      onClick={() =>
+                        handleRemoveSuperVisorFromManager(superVisor)
+                      }
+                    >
+                      <Trash2 className="text-white" />
+                    </Button>
+                  </div>
+                );
+              })}
+          </div>
 
           {/* DELETE USER PROFILE */}
           <div id="userProfileDeleteAction" className="w-full flex justify-end">

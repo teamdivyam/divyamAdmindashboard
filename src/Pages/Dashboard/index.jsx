@@ -1,7 +1,6 @@
 import { AppSidebar } from "@components/components/app-sidebar";
 import { NavLink, Outlet } from "react-router-dom";
 import { UserRound, Settings, LogOut } from "lucide-react";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -85,7 +84,7 @@ export default function DashBoardLayout() {
                   </NavLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <NavLink to="settings/general" className="w-full">
+                  <NavLink to="setting/general" className="w-full">
                     <span className="flex items-center justify-start gap-2">
                       <Settings className="size-4 " />
                       <span className="">Setting</span>

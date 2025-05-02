@@ -5,7 +5,7 @@ import { Label } from "@components/components/ui/label";
 import { Button } from "@components/components/ui/button";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
 
@@ -68,7 +68,7 @@ const Change_Password = () => {
     const postDataOnServer = async () => {
       try {
         const res = await fetch(
-          `${APP.BACKEND_URL}/api/admin/change-password`,
+          `${config.BACKEND_URL}/api/admin/change-password`,
           {
             method: "POST",
             headers: {

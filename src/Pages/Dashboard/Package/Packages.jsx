@@ -23,14 +23,55 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@components/components/ui/dropdown-menu";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@components/components/ui/pagination";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import Loader from "../../../components/components/Loader.jsx";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@components/components/ui/button";
 
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 import { toast } from "sonner";
+
+const initialState = {
+  page: 1,
+  limit: 16,
+};
+
+const Reducer = (state, action) => {
+  switch (action.type) {
+    case "FIRST_PAGE": {
+      return { ...state, page: (state.page = 1) };
+    }
+
+    case "SET_PAGE_NUM": {
+      return { ...state, page: action.payload };
+    }
+
+    case "INC_PAGE": {
+      return { ...state, page: state.page + 1 };
+    }
+
+    case "DEC_PAGE": {
+      return { ...state, page: state.page - 1 };
+    }
+    case "SET_PAGE_LIMIT": {
+      return { ...state, limit: action.payload };
+    }
+
+    default: {
+      return state;
+    }
+  }
+};
 
 const Packages = () => {
   const [open, setOpen] = useState(false);
@@ -38,6 +79,8 @@ const Packages = () => {
   const [err, setErr] = useState(true);
   const [count, setCount] = useState(5);
   const [packageID, setPackageID] = useState(null);
+
+  const [paginationState, dispatch] = useReducer(Reducer, initialState);
 
   const navigate = useNavigate();
   // will shift from normal state to reducer for ease
@@ -50,7 +93,7 @@ const Packages = () => {
       }
 
       const res = await fetch(
-        `${APP && APP.BACKEND_URL}/api/admin/package/${packageID}`,
+        `${config && config.BACKEND_URL}/api/admin/package/${packageID}`,
         {
           method: "DELETE",
           headers: {
@@ -59,13 +102,14 @@ const Packages = () => {
         }
       );
 
-      const data = await res.json();
+      if (!res.ok) {
+        throw new Error("Can't able to delete packages");
+      }
 
       if (res.ok) {
         setOpen((prev) => !prev);
         toast("Successfully deleted.");
         navigate(0);
-        console.log(data);
       }
     } catch (error) {
       console.log(error);
@@ -76,14 +120,14 @@ const Packages = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/package/`,
+          `${config && config.BACKEND_URL}/api/admin/package/?page=${
+            paginationState.page
+          }&limit=${paginationState.limit}`,
           {
             method: "GET",
             headers: {
               Authorization: `Bearer ${getTOKEN}`,
               "Content-Type": "application/json",
-              Accept: "application/json, application/xml",
-              "Accept-Language": "en_US",
             },
           }
         );
@@ -92,6 +136,7 @@ const Packages = () => {
         }
 
         const data = await response.json();
+
         setErr(false);
         setData(data);
       } catch (error) {
@@ -102,33 +147,10 @@ const Packages = () => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const InterVal = setInterval(() => {
-  //     if (count > 0) {
-  //       setCount((prev) => prev - 1);
-  //     } else {
-  //       clearInterval(InterVal);
-  //     }
-  //   }, 1000);
-
-  //   return () => {
-  //     clearInterval(InterVal);
-  //   };
-  // }, [open, setOpen]);
-
   const handleTwoFunc = (pkgID) => {
     setPackageID(pkgID);
     setOpen((prev) => !prev);
   };
-
-  // const showErrMsg = () => {
-  //   const isNodata = data && data.length <= 0;
-  //   return (
-  //     <>
-  //       isNodata && <p>No data Available</p>
-  //     </>
-  //   );
-  // };
 
   return (
     <>
@@ -153,7 +175,7 @@ const Packages = () => {
                   data.map((item) => (
                     <TableRow key={item.pkg_id}>
                       <TableCell className="font-medium">
-                        <NavLink to={`/dashboard/package/${item?.id}`}>
+                        <NavLink to={`/dashboard/package/${item?.slug}`}>
                           {item.pkg_id}
                         </NavLink>
                       </TableCell>
@@ -179,7 +201,8 @@ const Packages = () => {
                               <button
                                 className="w-full text-left"
                                 onClick={() => {
-                                  handleTwoFunc(item.id);
+                                  console.log("ITEM-is", item);
+                                  handleTwoFunc(item._id);
                                 }}
                               >
                                 Delete
@@ -200,6 +223,74 @@ const Packages = () => {
           )}
         </div>
       )}
+
+      {/* ORDER_PAGINATION */}
+
+      {data && data.length > 8 ? (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                className="cursor-pointer"
+                onClick={() => {
+                  {
+                    state?.page == 1 ? null : dispatch({ type: "FIRST_PAGE" });
+                  }
+                }}
+              ></PaginationPrevious>
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationLink
+                className="cursor-pointer"
+                isActive
+                onClick={() => {
+                  dispatch({ type: "SET_PAGE_NUM", payload: 1 });
+                }}
+              >
+                1
+              </PaginationLink>
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationLink
+                className="cursor-pointer"
+                isActive
+                onClick={() => {
+                  dispatch({ type: "SET_PAGE_NUM", payload: 2 });
+                }}
+              >
+                2
+              </PaginationLink>
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationLink
+                className="cursor-pointer"
+                isActive
+                onClick={() => {
+                  dispatch({ type: "SET_PAGE_NUM", payload: 3 });
+                }}
+              >
+                3
+              </PaginationLink>
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationNext
+                className="cursor-pointer"
+                onClick={() => {
+                  dispatch({ type: "INC_PAGE" });
+                }}
+              ></PaginationNext>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      ) : null}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>

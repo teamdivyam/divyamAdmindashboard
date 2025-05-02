@@ -18,6 +18,7 @@ import {
 } from "@components/components/ui/dropdown-menu";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
+
 import {
   Pagination,
   PaginationContent,
@@ -28,10 +29,9 @@ import {
   PaginationPrevious,
 } from "@components/components/ui/pagination";
 
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 import { EllipsisVertical } from "lucide-react";
 import { NavLink } from "react-router-dom";
-
 // reducers for pagination
 
 const init = {
@@ -74,11 +74,9 @@ const OrderPending = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // http://localhost:3001/api/admin/order-filter?filterBy=Pending&page=1&limit=4
-        // // http://localhost:3001/api/admin/order/filter/Pending?filterBy=Pending&page=1&limit=1
         const res = await fetch(
           `${
-            APP.BACKEND_URL
+            config.BACKEND_URL
           }/api/admin/order-filter?filterBy=${`Pending`}&page=${
             state.page
           }&limit=${state.limit}`,
@@ -87,8 +85,6 @@ const OrderPending = () => {
             headers: {
               "Content-type": "application/json",
               Authorization: `Bearer ${getTOKEN}`,
-              Accept: "application/json, application/xml",
-              "Accept-Language": "en_US",
             },
           }
         );
@@ -98,10 +94,7 @@ const OrderPending = () => {
 
         const data = await res.json();
 
-        setPendingOrder(data);
-        if (data.length == 0) {
-          toast.error("no data available.");
-        }
+        setPendingOrder(data.responseData);
       } catch (error) {
         console.log(error);
       }
@@ -129,46 +122,47 @@ const OrderPending = () => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[300px]">Name</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Order Status</TableHead>
             <TableHead>Payment Method</TableHead>
             <TableHead className="text-right">Amount</TableHead>
-            <TableHead className="text-right">Invoice No. </TableHead>
             <TableHead className="text-right">Transaction Date</TableHead>
             {/* <TableHead className="text-right">Actions</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
           {pendingOrders &&
-            pendingOrders.responseData.map((order) => {
-              const date = new Date(order.order_date);
+            pendingOrders.map((order) => {
+              const date = new Date(order.createdAt);
               const day = String(date.getDate()).padStart(2, "0");
-              const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+              const month = String(date.getMonth() + 1).padStart(2, "0");
+
+              // Months are 0-indexed
               const year = date.getFullYear();
 
               // Format the date as dd/mm/yyyy
               const formattedDate = `${day}/${month}/${year}`;
 
               return (
-                <TableRow key={order.order_id}>
+                <TableRow key={order._id}>
                   <TableCell className="font-medium">
                     <NavLink
-                      to={`${APP && APP.APP_URL}/dashboard/order/${
+                      to={`${config && config.APP_URL}/dashboard/order/${
                         order && order._id
                       }`}
                     >
-                      {order.order_id}
+                      {order.orderId}
                     </NavLink>
                   </TableCell>
                   <TableCell>
                     <span className="text-orange-500 font-semibold">
-                      {order.status}
+                      {order.orderStatus}
                     </span>
                   </TableCell>
-                  <TableCell>{order.payment_method}</TableCell>
+                  <TableCell>{order.payment.method}</TableCell>
                   <TableCell className="text-right">
-                    {order.total_amount}
+                    {order.totalAmount}
                   </TableCell>
-                  <TableCell className="text-right">{Math.random()}</TableCell>
+
                   <TableCell className="text-right">{formattedDate}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
@@ -193,69 +187,71 @@ const OrderPending = () => {
         </TableBody>
       </Table>
 
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              className="cursor-pointer"
-              onClick={() => {
-                {
-                  state?.page == 1 ? null : dispatch({ type: "FIRST_PAGE" });
-                }
-              }}
-            ></PaginationPrevious>
-          </PaginationItem>
+      {pendingOrders && pendingOrders.length > 10 ? (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                className="cursor-pointer"
+                onClick={() => {
+                  {
+                    state?.page == 1 ? null : dispatch({ type: "FIRST_PAGE" });
+                  }
+                }}
+              ></PaginationPrevious>
+            </PaginationItem>
 
-          <PaginationItem>
-            <PaginationLink
-              className="cursor-pointer"
-              isActive
-              onClick={() => {
-                dispatch({ type: "SET_PAGE_NUM", payload: 1 });
-              }}
-            >
-              1
-            </PaginationLink>
-          </PaginationItem>
+            <PaginationItem>
+              <PaginationLink
+                className="cursor-pointer"
+                isActive
+                onClick={() => {
+                  dispatch({ type: "SET_PAGE_NUM", payload: 1 });
+                }}
+              >
+                1
+              </PaginationLink>
+            </PaginationItem>
 
-          <PaginationItem>
-            <PaginationLink
-              className="cursor-pointer"
-              isActive
-              onClick={() => {
-                dispatch({ type: "SET_PAGE_NUM", payload: 2 });
-              }}
-            >
-              2
-            </PaginationLink>
-          </PaginationItem>
+            <PaginationItem>
+              <PaginationLink
+                className="cursor-pointer"
+                isActive
+                onClick={() => {
+                  dispatch({ type: "SET_PAGE_NUM", payload: 2 });
+                }}
+              >
+                2
+              </PaginationLink>
+            </PaginationItem>
 
-          <PaginationItem>
-            <PaginationLink
-              className="cursor-pointer"
-              isActive
-              onClick={() => {
-                dispatch({ type: "SET_PAGE_NUM", payload: 3 });
-              }}
-            >
-              3
-            </PaginationLink>
-          </PaginationItem>
+            <PaginationItem>
+              <PaginationLink
+                className="cursor-pointer"
+                isActive
+                onClick={() => {
+                  dispatch({ type: "SET_PAGE_NUM", payload: 3 });
+                }}
+              >
+                3
+              </PaginationLink>
+            </PaginationItem>
 
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
 
-          <PaginationItem>
-            <PaginationNext
-              className="cursor-pointer"
-              onClick={() => {
-                dispatch({ type: "INC_PAGE" });
-              }}
-            ></PaginationNext>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            <PaginationItem>
+              <PaginationNext
+                className="cursor-pointer"
+                onClick={() => {
+                  dispatch({ type: "INC_PAGE" });
+                }}
+              ></PaginationNext>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      ) : null}
     </div>
   );
 };

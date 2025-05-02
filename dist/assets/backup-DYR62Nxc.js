@@ -1,0 +1,1 @@
+import{R as e,B as t}from"./index-CqUjVgox.js";const c=()=>e.createElement(e.Fragment,null,e.createElement("div",{className:"backup-container "},e.createElement("h2",{className:"font-medium text-xl pb-2 border-b mb-8"},"Backup"),e.createElement(t,{className:" bg-theme-color"}," Download Now")));export{c as default};

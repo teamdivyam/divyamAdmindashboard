@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import SearchResults from "./AgentSearchResults";
 import AgentSearchResults from "./AgentSearchResults";
-import APP from "../../../../dataCred";
+import { config } from "../../../../config.js";
 
 import {
   Table,
@@ -33,7 +33,7 @@ const DeliveryAgentLists = () => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/agents?page=1&limit=2`,
+          `${config && config.BACKEND_URL}/api/admin/agents?page=1&limit=2`,
           {
             method: "GET",
             headers: {

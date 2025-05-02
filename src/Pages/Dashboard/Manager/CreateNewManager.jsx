@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Button } from "@components/components/ui/Button";
+import { Button } from "@components/components/ui/button";
 import { Input } from "@components/components/ui/input";
 import { Label } from "@components/components/ui/label";
 import { Textarea } from "@components/components/ui/textarea";
@@ -27,7 +27,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ShowEmailAndPassword from "./ShowEmailAndPassword.jsx";
 
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 import { MultiSelect } from "../../../components/components/multiSelect";
 
 const CREATE_NEW_EMPLOYEE_SCHEMA_VALIDATION = yup.object({
@@ -95,6 +95,7 @@ const CreateNewEmployee = () => {
   });
 
   console.log(watch());
+  console.log(errors);
 
   const getTOKEN = localStorage.getItem("AppID");
 
@@ -102,11 +103,9 @@ const CreateNewEmployee = () => {
     console.log(data);
     //Prepare data to send on backend..
     const formData = new FormData();
-    //set pinCode on useForm
 
-    //formData.append("assignedPinCodesLists", data.areaPinCodes);
     data.assignedPinCodesLists.map((pinCode) => {
-      formData.append("assignedPinCodesLists[]", pinCode);
+      formData.append("assignedPinCode[]", pinCode);
     });
 
     formData.append("fullName", data.fullName);
@@ -116,7 +115,7 @@ const CreateNewEmployee = () => {
     formData.append("email", data.email);
     formData.append("mobileNum", data.mobileNum);
     formData.append("pinCode", data.pinCode);
-    formData.append("profile", data?.profile[0]);
+    formData.append("avatar", data?.profile[0]);
     formData.append("address", data.address);
 
     // SEND DATA ON BACKEND
@@ -124,23 +123,23 @@ const CreateNewEmployee = () => {
     const postDATA = async (data) => {
       console.log(data);
       try {
-        const res = await fetch("http://localhost:3000/api/admin/employee", {
+        const res = await fetch(`${config.BACKEND_URL}/api/admin/employee`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${getTOKEN}`,
-            "Content-Type": "application/json",
           },
           body: formData,
         });
 
-        console.log(res);
+        if (!res.ok) {
+          throw new Error("Oops Something went wrong");
+        }
 
         const result = await res.json();
 
         if (result.success) {
           // show email and password
           setUserCred(true);
-          //
           reset();
           // Set API response data in the State to use in another components
           setResponseData(() => {
@@ -156,11 +155,6 @@ const CreateNewEmployee = () => {
     postDATA(data);
   };
 
-  // itemsArray.forEach((item, index) => {
-  //   formData.append(`items[${index}].name`, item.name);
-  //   formData.append(`items[${index}].quantity`, item.quantity);
-  // });
-
   const handlePinCodeChange = (pinCodes) => {
     // return an array
     const pinCodesArr = pinCodes.map((item, idx) => {
@@ -171,12 +165,12 @@ const CreateNewEmployee = () => {
     // setValue();
   };
 
-  // http://localhost:3008/api/admin/areas
-
   useEffect(() => {
     const fetchPinCodes = async () => {
       try {
-        const res = await fetch(`${APP && APP.BACKEND_URL}/api/admin/areas`);
+        const res = await fetch(
+          `${config && config.BACKEND_URL}/api/admin/areas`
+        );
         if (!res.ok) {
           throw new Error("Failed to fetch pin codes");
         }

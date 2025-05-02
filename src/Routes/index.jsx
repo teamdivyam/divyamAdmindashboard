@@ -1,37 +1,92 @@
-import React from "react";
+import React, { lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginForm from "../Pages/Login";
 import Register from "../Pages/Register";
 import DashBoardLayout from "../Pages/Dashboard";
-import OrdersAll from "../Pages/Dashboard/Order/OrdersAll";
-import General from "../Pages/Dashboard/Settings/General";
 import DashBoradIndexPage from "../Pages/Dashboard/Home";
-import ProtectedRoute from "../Pages/Dashboard/ProtectedR";
 import LogOut from "../Pages/Dashboard/Logout";
-import Packages from "../Pages/Dashboard/Package/Packages";
-// import ViewPackage from "../Pages/Dashboard/Package/ViewPackage";
-import ADD_NEW_PKG from "../Pages/Dashboard/Package/ADD_NEW_PKG";
-import OrderPending from "../Pages/Dashboard/Order/OrderPending";
-import OrderComplete from "../Pages/Dashboard/Order/OrderComplete";
-import VIEW_SINGLE_USER from "../Pages/Dashboard/Users/ViewUser";
-import Change_Password from "../Pages/Dashboard/Settings/Change_Password";
+import ProtectedRoute from "../Pages/Dashboard/ProtectedR";
+
+const OrdersAll = lazy(() => import("../Pages/Dashboard/Order/OrdersAll"));
+const General = lazy(() => import("../Pages/Dashboard/Settings/General"));
+const Packages = lazy(() => import("../Pages/Dashboard/Package/Packages"));
 import Setting_Layout from "../Pages/Dashboard/Settings/SettingLayout";
-import AdminProfile from "../Pages/AdminProfile";
-import Add_Delivery_Area from "../Pages/Dashboard/DeliveryAreas/Add_Delivery_Area";
-import CreateNewManager from "../Pages/Dashboard/Manager/CreateNewManager";
-// ../Pages/Dashboard/Employee/CreateNewEmployee
-// import ViewManager from "../Pages/Dashboard/Manager/View_Manger";
-import ViewManager from "../Pages/Dashboard/Manager/View_Manger";
-import LIstOfDeliveryAreas from "../Pages/Dashboard/DeliveryAreas/LIstOfDeliveryAreas";
-import Edit_Delivery_Area from "../Pages/Dashboard/DeliveryAreas/Edit_Delivery_Area";
-import EditOrder from "../Pages/Dashboard/Order/EditOrder";
-import ViewPackage from "../Pages/Dashboard/Package/ViewPackage";
-import OrderView from "../Pages/Dashboard/Order/OrderView";
-import ManagerLists from "../Pages/Dashboard/Manager/ManagerLists";
-import All_Users from "../Pages/Dashboard/Users/All_Users";
-import DeliveryAgentLists from "../Pages/Dashboard/DeliveryAgent/DeliveryAgentsLists";
-import SingleDeliveryAgent from "../Pages/Dashboard/DeliveryAgent/SingleDeliveryAgent";
-import CreateNewEmployee from "../Pages/Dashboard/Manager/CreateNewManager";
+
+const ADD_NEW_PKG = lazy(() =>
+  import("../Pages/Dashboard/Package/ADD_NEW_PKG")
+);
+const OrderPending = lazy(() =>
+  import("../Pages/Dashboard/Order/OrderPending")
+);
+
+const OrderComplete = lazy(() =>
+  import("../Pages/Dashboard/Order/OrderComplete")
+);
+
+const VIEW_SINGLE_USER = lazy(() =>
+  import("../Pages/Dashboard/Users/ViewUser")
+);
+
+const Change_Password = lazy(() =>
+  import("../Pages/Dashboard/Settings/Change_Password")
+);
+
+const AdminProfile = lazy(() => import("../Pages/AdminProfile"));
+
+const Add_Delivery_Area = lazy(() =>
+  import("../Pages/Dashboard/DeliveryAreas/Add_Delivery_Area")
+);
+
+const ViewManager = lazy(() =>
+  import("../Pages/Dashboard/Manager/View_Manger")
+);
+
+const LIstOfDeliveryAreas = lazy(() =>
+  import("../Pages/Dashboard/DeliveryAreas/LIstOfDeliveryAreas")
+);
+
+const Edit_Delivery_Area = lazy(() =>
+  import("../Pages/Dashboard/DeliveryAreas/Edit_Delivery_Area")
+);
+
+const EditOrder = lazy(() => import("../Pages/Dashboard/Order/EditOrder"));
+
+const ViewPackage = lazy(() =>
+  import("../Pages/Dashboard/Package/ViewPackage")
+);
+
+const OrderView = lazy(() => import("../Pages/Dashboard/Order/OrderView"));
+
+const ManagerLists = lazy(() =>
+  import("../Pages/Dashboard/Manager/ManagerLists")
+);
+
+const All_Users = lazy(() => import("../Pages/Dashboard/Users/All_Users"));
+
+const DeliveryAgentLists = lazy(() =>
+  import("../Pages/Dashboard/DeliveryAgent/DeliveryAgentsLists")
+);
+
+const SingleDeliveryAgent = lazy(() =>
+  import("../Pages/Dashboard/DeliveryAgent/SingleDeliveryAgent")
+);
+
+const CreateNewEmployee = lazy(() =>
+  import("../Pages/Dashboard/Manager/CreateNewManager")
+);
+const Backup = lazy(() => import("../Pages/Dashboard/Settings/backup"));
+
+const OrderCancelled = lazy(() =>
+  import("../Pages/Dashboard/Order/OrderCancelled")
+);
+
+const OrderRefunded = lazy(() =>
+  import("../Pages/Dashboard/Order/OrderRefended")
+);
+
+import NewOrder from "../Pages/Dashboard/New-Order";
+import NOT_FOUND from "../Pages/Dashboard/Not-found";
+import OrderCard from "../Pages/Dashboard/Users/Component/OrderCard";
 
 const DashBoardRoutes = () => {
   return (
@@ -40,6 +95,8 @@ const DashBoardRoutes = () => {
         <Route path="/" element={<LoginForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/neworder" element={<NewOrder />} />
+
         <Route
           path="/dashboard"
           element={
@@ -55,6 +112,8 @@ const DashBoardRoutes = () => {
           <Route path="order" element={<OrdersAll />} />
           <Route path="order-pending" element={<OrderPending />} />
           <Route path="order-complete" element={<OrderComplete />} />
+          <Route path="order-cancelled" element={<OrderCancelled />} />
+          <Route path="order-refunded" element={<OrderRefunded />} />
           <Route path="order-edit/:ORDER_ID" element={<EditOrder />} />
           <Route path="Order/:ORDER_ID" element={<OrderView />} />
           <Route path="package" element={<Packages />} />
@@ -92,8 +151,11 @@ const DashBoardRoutes = () => {
           <Route path="/dashboard/setting" element={<Setting_Layout />}>
             <Route path="general" index element={<General />} />
             <Route path="change-password" element={<Change_Password />} />
+            <Route path="backup" element={<Backup />} />
           </Route>
         </Route>
+        <Route path="orderCard" element={<OrderCard />} />
+        <Route path="*" element={<NOT_FOUND />} />
       </Routes>
     </Router>
   );

@@ -35,8 +35,7 @@ import {
 } from "@components/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
 
-import APP from "../../../../dataCred.js";
-import Loader from "../../../components/components/Loader.jsx";
+import { config } from "../../../../config.js";
 import { NavLink } from "react-router-dom";
 import { useReducer } from "react";
 
@@ -84,7 +83,7 @@ const ManagerLists = () => {
     const fetchDATA = async () => {
       try {
         const res = await fetch(
-          `${APP.BACKEND_URL}/api/admin/employees?role=${role}&page=${state.page}&limit=${state.limit}`,
+          `${config.BACKEND_URL}/api/admin/employees?role=${role}&page=${state.page}&limit=${state.limit}`,
           {
             method: "GET",
             headers: {

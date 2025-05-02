@@ -24,7 +24,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@components/components/ui/sidebar";
-import APP from "../../../dataCred.js";
+
+import { config } from "../../../config.js";
 
 const data = {
   user: {
@@ -58,7 +59,7 @@ const data = {
       items: [
         {
           title: "Home",
-          url: `${APP?.APP_URL}/dashboard`,
+          url: `${config?.APP_URL}/dashboard`,
         },
       ],
     },
@@ -70,16 +71,24 @@ const data = {
       items: [
         {
           title: "All",
-          url: `${APP?.APP_URL}/dashboard/order`,
+          url: `${config?.APP_URL}/dashboard/order`,
         },
         ,
         {
           title: "Pending",
-          url: `${APP?.APP_URL}/dashboard/order-pending`,
+          url: `${config?.APP_URL}/dashboard/order-pending`,
         },
         {
-          title: "Complete",
-          url: `${APP?.APP_URL}/dashboard/order-complete`,
+          title: "Completed",
+          url: `${config?.APP_URL}/dashboard/order-complete`,
+        },
+        {
+          title: "Cancellation Request",
+          url: `${config?.APP_URL}/dashboard/order-cancelled`,
+        },
+        {
+          title: "Refunded",
+          url: `${config?.APP_URL}/dashboard/order-refunded`,
         },
       ],
     },
@@ -90,42 +99,42 @@ const data = {
       items: [
         {
           title: "All",
-          url: `${APP?.APP_URL}/dashboard/users`,
+          url: `${config?.APP_URL}/dashboard/users`,
         },
         {
           title: "Verified",
-          url: `${APP?.APP_URL}/dashboard/verified-users`,
+          url: `${config?.APP_URL}/dashboard/verified-users`,
         },
       ],
     },
     {
       title: "Delivery Areas",
-      url: `${APP?.APP_URL}/dashboard/delivery-areas`,
+      url: `${config?.APP_URL}/dashboard/delivery-areas`,
       icon: LocateFixed,
       items: [
         {
           title: "All Address List",
-          url: `${APP?.APP_URL}/dashboard/delivery-area-lists`,
+          url: `${config?.APP_URL}/dashboard/delivery-area-lists`,
         },
         {
           title: "Add New Address ",
-          url: `${APP?.APP_URL}/dashboard/add-new-area`,
+          url: `${config?.APP_URL}/dashboard/add-new-area`,
         },
       ],
     },
 
     {
       title: "Packages",
-      url: `${APP?.APP_URL}/dashboard/package"`,
+      url: `${config?.APP_URL}/dashboard/package"`,
       icon: Group,
       items: [
         {
           title: "Packages",
-          url: `${APP?.APP_URL}/dashboard/package`,
+          url: `${config?.APP_URL}/dashboard/package`,
         },
         {
           title: "Add New Packages",
-          url: `${APP?.APP_URL}/dashboard/add-new-package`,
+          url: `${config?.APP_URL}/dashboard/add-new-package`,
         },
       ],
     },
@@ -137,11 +146,11 @@ const data = {
       items: [
         {
           title: "Employee",
-          url: `${APP?.APP_URL}/dashboard/employee`,
+          url: `${config?.APP_URL}/dashboard/employee`,
         },
         {
           title: "New Employee",
-          url: `${APP?.APP_URL}/dashboard/new-employee`,
+          url: `${config?.APP_URL}/dashboard/new-employee`,
         },
       ],
     },
@@ -153,7 +162,7 @@ const data = {
       items: [
         {
           title: "Delivery Agents",
-          url: `${APP?.APP_URL}/dashboard/delivery-agents`,
+          url: `${config?.APP_URL}/dashboard/delivery-agents`,
         },
       ],
     },
@@ -165,18 +174,12 @@ const data = {
       items: [
         {
           title: "General",
-          url: `${APP?.APP_URL}/dashboard/setting/general`,
+          url: `${config?.APP_URL}/dashboard/setting/general`,
         },
       ],
     },
   ],
-  projects: [
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-  ],
+  projects: [],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

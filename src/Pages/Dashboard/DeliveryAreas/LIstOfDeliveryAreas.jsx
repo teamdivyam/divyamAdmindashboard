@@ -11,6 +11,7 @@ import { NavLink, Navigate, useNavigate } from "react-router-dom";
 import { EllipsisVertical, MapPin, CirclePlus } from "lucide-react";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@components/components/ui/dropdown-menu";
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 import { format } from "date-fns";
 import {
   Pagination,
@@ -74,7 +75,7 @@ const LIstOfDeliveryAreas = () => {
     if (!AREA_ZONE_ID) return;
     try {
       const res = await fetch(
-        `${APP && APP.BACKEND_URL}/api/admin/areas-zone/${AREA_ZONE_ID}`,
+        `${config && config.BACKEND_URL}/api/admin/areas-zone/${AREA_ZONE_ID}`,
         {
           method: "DELETE",
           headers: {
@@ -104,7 +105,7 @@ const LIstOfDeliveryAreas = () => {
     const getAreaLists = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/areas-zone?page=${
+          `${config && config.BACKEND_URL}/api/admin/areas-zone?page=${
             state?.page
           }&limit=${state?.limit}`,
           {

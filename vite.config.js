@@ -6,5 +6,9 @@ export default defineConfig({
       '@components': '/src/components',
       '@utils': '/src/utils'
     }
+  },
+  server: {
+    historyApiFallback: true
   }
+
 });

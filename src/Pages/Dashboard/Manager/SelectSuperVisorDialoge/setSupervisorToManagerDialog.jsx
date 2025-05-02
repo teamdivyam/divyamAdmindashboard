@@ -24,7 +24,7 @@ const SetSupervisorToManagerDialog = ({ IsDialogVisible, ManagerInfo }) => {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hmm </DialogTitle>
+            <DialogTitle>Set Supervisor</DialogTitle>
             <DialogDescription>
               <ViewSuperVisorLists ManagerID={ManagerInfo} />
             </DialogDescription>
@@ -35,4 +35,4 @@ const SetSupervisorToManagerDialog = ({ IsDialogVisible, ManagerInfo }) => {
   );
 };
 
-export default SetSupervisorToManagerDialog;
+export default React.memo(SetSupervisorToManagerDialog);

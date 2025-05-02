@@ -21,6 +21,7 @@ import {
 } from "@components/components/ui/pagination";
 
 import React, { useEffect, useReducer, useState } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,8 +31,9 @@ import {
   DropdownMenuTrigger,
 } from "@components/components/ui/dropdown-menu";
 
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 import { Toaster } from "@components/components/ui/sonner";
+
 import { toast } from "sonner";
 
 import { EllipsisVertical } from "lucide-react";
@@ -103,7 +105,7 @@ export default function LinksTable() {
     const searchOrder = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/search-orders?searchKey=${
+          `${config && config.BACKEND_URL}/api/admin/search-orders?searchKey=${
             data?.searchKey
           }`,
           {
@@ -134,19 +136,20 @@ export default function LinksTable() {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${APP.BACKEND_URL}/api/admin/order?page=${state?.page}&limit=${state?.limit}`,
+          `${config.BACKEND_URL}/api/admin/order?page=${state?.page}&limit=${state?.limit}`,
           {
             method: "GET",
             headers: {
               Authorization: `Bearer ${getTOKEN}`,
               "Content-Type": "application/json",
-              Accept: "application/json, application/xml",
-              "Accept-Language": "en_US",
             },
           }
         );
+
         const data = await res.json();
         setOrder(data);
+
+        console.log(data);
       } catch (error) {
         console.log(error);
       }
@@ -187,8 +190,6 @@ export default function LinksTable() {
         <span className="text-slate-500 font-bold">{status}</span>
       </>
     );
-
-    console.log(status);
   };
 
   useEffect(() => {
@@ -239,14 +240,13 @@ export default function LinksTable() {
               <TableHead>Status</TableHead>
               <TableHead>Payment Method</TableHead>
               <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="text-right">Invoice No. </TableHead>
               <TableHead className="text-right">Transaction Date</TableHead>
               {/* <TableHead className="text-right">Actions</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
             {Orders && Orders.length > 0 ? (
-              Orders.map((order) => {
+              Orders.map((order, idx) => {
                 const date = new Date(order.createdAt);
                 const day = String(date.getDate()).padStart(2, "0");
                 const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
@@ -256,18 +256,19 @@ export default function LinksTable() {
                 const formattedDate = `${day}/${month}/${year}`;
 
                 return (
-                  <TableRow key={order.order_id}>
+                  <TableRow key={idx}>
                     <TableCell className="font-medium">
-                      <NavLink to={`${order._id}`}>{order.order_id}</NavLink>
+                      <NavLink to={`${order._id}`}>
+                        {order.orderId.split("_").at(1)}
+                      </NavLink>
                     </TableCell>
                     <TableCell>
-                      {changeOrderStatusColor(order.status)}
+                      {changeOrderStatusColor(order.orderStatus)}
                     </TableCell>
-                    <TableCell>{order.payment_method}</TableCell>
+                    <TableCell>{order.payment.method}</TableCell>
                     <TableCell className="text-right">
-                      {order.total_amount}
+                      {order.totalAmount}
                     </TableCell>
-                    <TableCell className="text-right">97373737</TableCell>
                     <TableCell className="text-right">
                       {formattedDate}
                     </TableCell>
@@ -296,69 +297,73 @@ export default function LinksTable() {
 
         {/* ORDER_PAGINATION */}
 
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                className="cursor-pointer"
-                onClick={() => {
-                  {
-                    state?.page == 1 ? null : dispatch({ type: "FIRST_PAGE" });
-                  }
-                }}
-              ></PaginationPrevious>
-            </PaginationItem>
+        {Orders && Orders.length > 10 ? (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  className="cursor-pointer"
+                  onClick={() => {
+                    {
+                      state?.page == 1
+                        ? null
+                        : dispatch({ type: "FIRST_PAGE" });
+                    }
+                  }}
+                ></PaginationPrevious>
+              </PaginationItem>
 
-            <PaginationItem>
-              <PaginationLink
-                className="cursor-pointer"
-                isActive
-                onClick={() => {
-                  dispatch({ type: "SET_PAGE_NUM", payload: 1 });
-                }}
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
+              <PaginationItem>
+                <PaginationLink
+                  className="cursor-pointer"
+                  isActive
+                  onClick={() => {
+                    dispatch({ type: "SET_PAGE_NUM", payload: 1 });
+                  }}
+                >
+                  1
+                </PaginationLink>
+              </PaginationItem>
 
-            <PaginationItem>
-              <PaginationLink
-                className="cursor-pointer"
-                isActive
-                onClick={() => {
-                  dispatch({ type: "SET_PAGE_NUM", payload: 2 });
-                }}
-              >
-                2
-              </PaginationLink>
-            </PaginationItem>
+              <PaginationItem>
+                <PaginationLink
+                  className="cursor-pointer"
+                  isActive
+                  onClick={() => {
+                    dispatch({ type: "SET_PAGE_NUM", payload: 2 });
+                  }}
+                >
+                  2
+                </PaginationLink>
+              </PaginationItem>
 
-            <PaginationItem>
-              <PaginationLink
-                className="cursor-pointer"
-                isActive
-                onClick={() => {
-                  dispatch({ type: "SET_PAGE_NUM", payload: 3 });
-                }}
-              >
-                3
-              </PaginationLink>
-            </PaginationItem>
+              <PaginationItem>
+                <PaginationLink
+                  className="cursor-pointer"
+                  isActive
+                  onClick={() => {
+                    dispatch({ type: "SET_PAGE_NUM", payload: 3 });
+                  }}
+                >
+                  3
+                </PaginationLink>
+              </PaginationItem>
 
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
 
-            <PaginationItem>
-              <PaginationNext
-                className="cursor-pointer"
-                onClick={() => {
-                  dispatch({ type: "INC_PAGE" });
-                }}
-              ></PaginationNext>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+              <PaginationItem>
+                <PaginationNext
+                  className="cursor-pointer"
+                  onClick={() => {
+                    dispatch({ type: "INC_PAGE" });
+                  }}
+                ></PaginationNext>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        ) : null}
       </div>
     </>
   );

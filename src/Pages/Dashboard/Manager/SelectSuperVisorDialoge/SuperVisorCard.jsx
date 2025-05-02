@@ -1,12 +1,15 @@
 import React from "react";
-import { Button } from "@components/components/ui/Button";
+import { Button } from "@components/components/ui/button";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { config } from "../../../../../config.js";
 
 const SuperVisorCard = ({ TextContent, ManagerInfo }) => {
-  console.log("MANGER_INFO", ManagerInfo, "TEXT", TextContent);
   const managerObjId = ManagerInfo._id; //manager-objet-id
   const superVisorId = TextContent?._id; //supervisor object id-
   if (!TextContent) return;
+
+  const navigate = useNavigate();
 
   const getToken = localStorage.getItem("AppID");
 
@@ -18,7 +21,7 @@ const SuperVisorCard = ({ TextContent, ManagerInfo }) => {
 
     try {
       const res = await fetch(
-        "http://localhost:3004/api/admin/set-supervisor",
+        `${config.BACKEND_URL}/api/admin/set-supervisor`,
         {
           method: "POST",
           headers: {
@@ -30,6 +33,9 @@ const SuperVisorCard = ({ TextContent, ManagerInfo }) => {
       );
 
       const results = await res.json();
+      if (results) {
+        navigate(0);
+      }
     } catch (error) {
       throw new Error(error);
     }
@@ -47,7 +53,7 @@ const SuperVisorCard = ({ TextContent, ManagerInfo }) => {
       <div className="flex">
         <img src="https://i.pravatar.cc/300" className="size-10 rounded-full" />
         <div className="pl-4">
-          <h2 className="font-semibold">{TextContent?.fullName}</h2>
+          <h2 className="font-semibold capitalize">{TextContent?.fullName}</h2>
           <p>{TextContent?.address}</p>
         </div>
       </div>
@@ -58,4 +64,4 @@ const SuperVisorCard = ({ TextContent, ManagerInfo }) => {
   );
 };
 
-export default SuperVisorCard;
+export default React.memo(SuperVisorCard);

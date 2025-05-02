@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
-import APP from "../../../../dataCred.js";
+import { config } from "../../../../config.js";
 import UserCard from "./UserCard.jsx";
 import { useForm } from "react-hook-form";
 import { Button } from "@components/components/ui/button";
@@ -19,6 +19,7 @@ import debounce from "lodash.debounce";
 import { Toaster } from "@components/components/ui/sonner";
 import { ChevronsRight, ChevronsLeft } from "lucide-react";
 import Loader from "../../../components/components/Loader.jsx";
+import { toast } from "sonner";
 
 const SEARCH_USER_VALIDATE_SCHEMA = yup.object({
   searchKey: yup.string().trim().max(50).required("Searchbox can't be blank"),
@@ -26,7 +27,7 @@ const SEARCH_USER_VALIDATE_SCHEMA = yup.object({
 
 const initialState = {
   page: 1,
-  limit: 15,
+  limit: 9,
   isPrevPageAvailable: false,
   isNextPageAvailable: false,
 };
@@ -79,13 +80,14 @@ const All_Users = () => {
       return val;
     }
   }
-  const getTOKEN = localStorage.getItem("AppID") || undefined;
+
+  const getTOKEN = localStorage.getItem("AppID");
 
   const onSubmit = (data) => {
     const searchUsers = async () => {
       try {
         const res = await fetch(
-          `${APP && APP.BACKEND_URL}/api/admin/search-user?s=${
+          `${config && config.BACKEND_URL}/api/admin/search-user?s=${
             data?.searchKey
           }`,
           {
@@ -97,6 +99,10 @@ const All_Users = () => {
             },
           }
         );
+
+        if (!res.ok) {
+          toast.error("No Records founds");
+        }
 
         const results = await res.json();
         // console.log("Called", results);
@@ -134,48 +140,11 @@ const All_Users = () => {
     }
   }, [userSearchBarVal, setUserSearchBarVal]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${APP && APP.BACKEND_URL}/api/admin/users?page=${state.page}&limit=${
-  //           state.limit
-  //         }`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             Authorization: `Bearer ${getToken}`,
-  //             "Content-Type": "application/json",
-  //             Accept: "application/json, application/xml",
-  //             "Accept-Language": "en_US",
-  //           },
-  //         }
-  //       );
-  //       if (!response.ok) {
-  //         setErr(true);
-  //         setUsers(() => {
-  //           return [];
-  //         });
-  //       }
-  //       const data = await response.json();
-  //       console.log("ResponseData", data);
-
-  //       setErr(false);
-  //       setUsers(() => {
-  //         return [...data];
-  //       });
-  //     } catch (error) {
-  //       setErr(true);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [state]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${APP?.BACKEND_URL}/api/admin/users?page=${state.page}&limit=${state.limit}`,
+          `${config.BACKEND_URL}/api/admin/users?page=${state.page}&limit=${state.limit}`,
           {
             method: "GET",
             headers: {
@@ -187,6 +156,7 @@ const All_Users = () => {
         );
 
         if (!response.ok) {
+          console.log("Toaster..");
           // setErr(true);
           setUsers([]); // No need to use a function here, just directly set the empty array
           return; // Early return if the response is not okay
@@ -212,7 +182,8 @@ const All_Users = () => {
     if (!users.length) {
       return (
         <span className="block lg:mt-20 text-center font-medium text-neutral-500">
-          Oops! No users have signed up yet. 😊
+          You've reached the end of the list. Go back or consider ways to
+          inspire more users to sign up
         </span>
       );
     }

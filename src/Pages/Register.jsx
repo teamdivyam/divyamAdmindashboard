@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { NavLink, useNavigate } from "react-router-dom";
-import APP from "../../dataCred.js";
+import { config } from "../../config.js";
 
 const RegisterFormValidationSchema = yup
   .object({
@@ -61,6 +61,7 @@ const Register = () => {
   const onSubmit = (data) => {
     const postData = async (data) => {
       const formData = new FormData();
+
       formData.append("avatar", data.file[0]);
       formData.append("fullName", data.fullName);
       formData.append("email", data.email);
@@ -69,10 +70,13 @@ const Register = () => {
       formData.append("mobileNum", data.mobileNum);
 
       try {
-        const response = await fetch(`${APP.BACKEND_URL}/api/admin/register`, {
-          method: "POST",
-          body: formData,
-        });
+        const response = await fetch(
+          `${config.BACKEND_URL}/api/admin/register`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         if (!response.ok) {
           console.error("Cannot register a new account");
