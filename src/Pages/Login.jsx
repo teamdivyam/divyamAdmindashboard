@@ -48,12 +48,10 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
 
   const onSubmit = async (data) => {
-    const token = await recaptchaRef.executeAsync();
-
-    if (!token) {
-      alert("reCAPTCHA verification failed");
-      return;
-    }
+    const token =
+      config.PRODUCTION_MODE === true
+        ? await recaptchaRef.executeAsync()
+        : "undefined";
 
     const payload = { ...data, recaptchaToken: token };
 
@@ -90,6 +88,17 @@ const LoginPage = () => {
 
   const handleRecaptcha = (data) => {
     console.log("BY RECAPTCHA", data);
+  };
+
+  const ShowRecaptcha = () => {
+    return (
+      <ReCAPTCHA
+        className=""
+        size="invisible"
+        sitekey={config.REACPTCAH_KEY}
+        ref={(ref) => setRecaptchaRef(ref)}
+      />
+    );
   };
 
   useEffect(() => {
@@ -157,14 +166,8 @@ const LoginPage = () => {
                   {errors?.password ? errors.password?.message : "."}
                 </div>
               </div>
-              {/* RE-CAPTCH */}
-              <ReCAPTCHA
-                className=""
-                size="invisible"
-                sitekey={config.REACPTCAH_KEY}
-                ref={(ref) => setRecaptchaRef(ref)}
-              />
 
+              {/* {ShowRecaptcha()} */}
               <Button type="submit" className="w-full bg-theme-color">
                 Login
               </Button>

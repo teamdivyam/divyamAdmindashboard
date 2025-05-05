@@ -91,8 +91,12 @@ const Register = () => {
         const result = await response.json();
 
         if (result.success) {
-          navigate("/login");
-          toast("Registered successfully.");
+          toast.success("New Account Registered successfully");
+
+          // redirect to login page
+          setTimeout(() => {
+            navigate("/login");
+          }, 15 * 100);
         }
       } catch (error) {
         console.error("Error during registration:", error);
@@ -111,6 +115,7 @@ const Register = () => {
   return (
     <>
       <Toaster />
+
       <div className=" h-screen  flex items-center">
         <Card className="mx-auto lg:w-1/4 shadow-sm">
           <CardHeader>

@@ -86,19 +86,17 @@ const AdminProfile = () => {
               <ShieldCheck className="text-green-400" />
             </h2>
             <p className="mobileNum flex items-center pt-2 text-neutral-400 gap-2">
-              <Mail /> admin@divyam.in
+              <Mail /> {adminData?.email}
             </p>
 
             <p className="age  mt-2  flex items-center  text-neutral-400 gap-2">
               <Phone />
-              <span>9898986765</span>
+              <span>{adminData?.mobileNum}</span>
             </p>
 
             <p className="age  mt-2  flex items-center  text-neutral-400 gap-2">
               <MapPin />
-              <span>
-                Railway Junction Prayagraj near Pappu paan wale 12/72{" "}
-              </span>
+              <span>Not available </span>
             </p>
 
             <p className="age  mt-2  flex items-center  text-neutral-400 gap-2">
