@@ -13,7 +13,7 @@ import { Label } from "@components/components/ui/label";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Navigate } from "react-router-dom";
 import { config } from "../../config.js";
 import { toast, Toaster } from "sonner";
 
@@ -52,6 +52,13 @@ const RegisterFormValidationSchema = yup
 
 const Register = () => {
   const navigate = useNavigate();
+
+  const SHOW_REGISTER_PAGE =
+    config?.SHOW_REGISTER_PAGE === "true" ? true : false;
+
+  if (!SHOW_REGISTER_PAGE) {
+    return <Navigate to="/login" />;
+  }
 
   const {
     register,

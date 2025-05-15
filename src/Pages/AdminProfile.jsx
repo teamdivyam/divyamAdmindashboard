@@ -69,17 +69,20 @@ const AdminProfile = () => {
 
       <div className="cardBody bg-white dark:bg-slate-800 rounded-md border p-6 mt-6">
         <div className="userProfile flex flex-row ">
-          <img
-            src={`${config && config.IMAGE_CDN}/Uploads/admins/${
-              adminData && adminData.avatar
-            }`}
-            className=" rounded-full shadow-lg size-24 object-cover"
-          />
+          {adminData && adminData?.avatar ? (
+            <img
+              src={`${config && config.IMAGE_CDN}/Uploads/admins/${
+                adminData && adminData.avatar
+              }`}
+              className=" rounded-full shadow-lg size-24 object-cover"
+            />
+          ) : null}
 
           {/* <img
             src="https://i.pravatar.cc/300"
             className=" rounded-full shadow-lg size-24"
           /> */}
+
           <div className="profileText pt-1 pl-10">
             <h2 className="capitalize font-medium text-neutral-600 text-3xl flex mt-4 gap-2 items-center">
               {adminData && adminData.fullName}
