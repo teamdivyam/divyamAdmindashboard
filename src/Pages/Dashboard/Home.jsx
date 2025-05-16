@@ -38,6 +38,8 @@ const chartConfig = {
 };
 
 const DashBoardIndexPage = () => {
+  // RESET_STORE
+
   return (
     <div className="homePage_Wrapper  mx-4">
       <Card className="">
