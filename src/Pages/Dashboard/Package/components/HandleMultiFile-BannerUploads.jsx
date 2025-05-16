@@ -47,6 +47,7 @@ const HandleMultiFileUpload = ({ ToggleModal }) => {
 
     try {
       const { url, key } = await getSignedUrl(fileName); //file-path or file-name
+
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1920,
@@ -152,4 +153,4 @@ const HandleMultiFileUpload = ({ ToggleModal }) => {
   );
 };
 
-export default HandleMultiFileUpload;
+export default React.memo(HandleMultiFileUpload);

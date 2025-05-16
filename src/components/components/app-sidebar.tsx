@@ -53,7 +53,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "http://localhost:5173/dashboard/",
+      url: "/",
       icon: SquareTerminal,
       isActive: true,
       items: [
@@ -63,7 +63,6 @@ const data = {
         },
       ],
     },
-    // ${APP && APP.APP_BACKEND_URL}/dashboard/package
     {
       title: "Orders",
       url: "#",

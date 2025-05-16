@@ -44,9 +44,10 @@ const initialState = {
 import { config } from "../../../../config.js";
 import HandleMultiFileUpload from "./components/HandleMultiFile-BannerUploads.jsx";
 import HandleMultiFileProductImagesUploads from "./components/HandleMultiFile-ProductImages.jsx";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import getFileNameFromImgURL from "../../../utils/extractFileNameFromImgUrl.js";
 import { resetImageStore } from "../../../store/UploadImages/uploadImageSlice.js";
+import { useLocation } from "react-router-dom";
 
 const Reducer = (state, action) => {
   switch (action.type) {
@@ -83,11 +84,15 @@ const ADD_NEW_PKG = () => {
   const [isShowBannerDiloge, setShowbannerialoge] = useState();
   const [isShowProductDiloge, setShowProductdialoge] = useState();
 
+  const location = useLocation();
+
+  const storeDispatch = useDispatch();
+
   const productBannerImg = useSelector((state) => state.UploadedImgs.banners);
   const productImgs = useSelector((state) => state.UploadedImgs.productImages);
 
   const productBannerImgArr = useMemo(() => {
-    const returnValue = productBannerImg.map((banner, idx) => {
+    const returnValue = productBannerImg?.map((banner, idx) => {
       return {
         imgPath: getFileNameFromImgURL(banner.imgUrl),
         order: idx + 1,
@@ -97,8 +102,6 @@ const ADD_NEW_PKG = () => {
     });
     return returnValue;
   });
-
-  const dispatchREDUX = useDispatch();
 
   const productMainImg = useMemo(() => {
     const returnValue = productImgs.map((productImg, idx) => {
@@ -257,8 +260,8 @@ const ADD_NEW_PKG = () => {
   };
 
   useEffect(() => {
-    console.log("textListItems", packageListItems);
-  }, []);
+    storeDispatch(resetImageStore());
+  }, [location.pathname]);
 
   return (
     <>

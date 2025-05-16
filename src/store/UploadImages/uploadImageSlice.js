@@ -26,7 +26,16 @@ const UploadImageSlice = createSlice({
         },
 
         removeSingleUploadedImg: (state, action) => {
-            state.banners = state.banners.filter((banner) => banner.id !== action.payload);
+            const imageType = action.payload.imageType;
+            const imageId = action.payload.id;
+
+            if (imageType == "banner") {
+                state.banners = state.banners.filter((banner) => banner.id !== imageId);
+            }
+            else {
+                state.productImages = state.productImages.filter((product) => product.id !== imageId);
+            }
+
         },
 
         uploadSingleProductImg: (state, action) => {
@@ -49,8 +58,8 @@ const UploadImageSlice = createSlice({
         },
 
         resetImageStore: (state, action) => {
-            state.productImages = [];
-            state.banners = [];
+            console.log("RESET...");
+            return initialState
         }
     }
 });

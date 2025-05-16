@@ -19,7 +19,7 @@ const PackageListsItems = () => {
             </span>
             <div className="packageItemsList">
               {packageListItems && packageListItems.length > 0 ? (
-                packageListItems.map((item) => (
+                packageListItems?.map((item) => (
                   <div key={item.id} className="packagesListsWrapper">
                     <div className="bg-neutral-100 rounded p-1 text-lg flex items-center justify-between my-2">
                       <span>{item.packageItem}</span>
