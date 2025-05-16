@@ -91,6 +91,10 @@ const LoginPage = () => {
   };
 
   const ShowRecaptcha = () => {
+    const isProductionModeEnable =
+      config.PRODUCTION_MODE == "true" ? true : false;
+
+    if (!isProductionModeEnable) return null;
     return (
       <ReCAPTCHA
         className=""
@@ -167,7 +171,7 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              {/* {ShowRecaptcha()} */}
+              {ShowRecaptcha()}
               <Button type="submit" className="w-full bg-theme-color">
                 Login
               </Button>
