@@ -47,9 +47,20 @@ const UploadImageSlice = createSlice({
         removeSingleProductImg: (state, action) => {
             state.productImages = state.productImages.filter((productImg) => productImg.id !== action.payload);
         },
+
+        resetImageStore: (state, action) => {
+            state.productImages = [];
+            state.banners = [];
+        }
     }
 });
 
 export default UploadImageSlice.reducer;
-export const { uploadSingleImg, removeSingleUploadedImg,
-    uploadSingleProductImg, removeSingleProductImg } = UploadImageSlice.actions;
+
+export const {
+    uploadSingleImg,
+    removeSingleUploadedImg,
+    uploadSingleProductImg,
+    removeSingleProductImg,
+    resetImageStore
+} = UploadImageSlice.actions;

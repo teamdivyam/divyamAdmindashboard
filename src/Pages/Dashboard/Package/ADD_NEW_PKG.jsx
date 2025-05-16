@@ -44,8 +44,9 @@ const initialState = {
 import { config } from "../../../../config.js";
 import HandleMultiFileUpload from "./components/HandleMultiFile-BannerUploads.jsx";
 import HandleMultiFileProductImagesUploads from "./components/HandleMultiFile-ProductImages.jsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import getFileNameFromImgURL from "../../../utils/extractFileNameFromImgUrl.js";
+import { resetImageStore } from "../../../store/UploadImages/uploadImageSlice.js";
 
 const Reducer = (state, action) => {
   switch (action.type) {
@@ -84,6 +85,7 @@ const ADD_NEW_PKG = () => {
 
   const productBannerImg = useSelector((state) => state.UploadedImgs.banners);
   const productImgs = useSelector((state) => state.UploadedImgs.productImages);
+
   const productBannerImgArr = useMemo(() => {
     const returnValue = productBannerImg.map((banner, idx) => {
       return {
@@ -95,6 +97,8 @@ const ADD_NEW_PKG = () => {
     });
     return returnValue;
   });
+
+  const dispatchREDUX = useDispatch();
 
   const productMainImg = useMemo(() => {
     const returnValue = productImgs.map((productImg, idx) => {
@@ -194,6 +198,9 @@ const ADD_NEW_PKG = () => {
         }
         // on SUccess
         toast("New package added successfully..");
+
+        // Reset-package-store
+        dispatchREDUX(resetImageStore());
       } catch (error) {
         console.log(error);
       }
