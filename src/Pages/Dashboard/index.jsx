@@ -22,19 +22,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@components/components/ui//dropdown-menu";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import React, { useEffect } from "react";
-import { resetImageStore } from "../../store/UploadImages/uploadImageSlice.js";
 
 export default function DashBoardLayout() {
   const theme = useSelector((state) => state.theme.darkMode);
-  const dispatch = useDispatch();
-
-  /**
-   * RESET_IMAGE_STORE
-   */
-
-  dispatch(resetImageStore());
 
   useEffect(() => {
     if (theme === "light") {

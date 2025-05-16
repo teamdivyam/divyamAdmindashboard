@@ -4,6 +4,6 @@ const _config = {
     IMAGE_CDN: import.meta.env.VITE_IMG_PATH,
     REACPTCAH_KEY: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
     PRODUCTION_MODE: import.meta.env.VITE_PRODUCTION,
-    SHOW_REGISTER_PAGE: import.meta.env.VITE_SHOW_REGISTER_PAG
+    SHOW_REGISTER_PAGE: import.meta.env.VITE_SHOW_REGISTER_PAGE
 }
 export { _config as config }

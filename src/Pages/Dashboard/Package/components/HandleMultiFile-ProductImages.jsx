@@ -5,11 +5,8 @@ import ShowUploadedFile from "./ShowUploadedFile.jsx";
 import { config } from "../../../../../config.js";
 import imageCompression from "browser-image-compression";
 import { nanoid } from "@reduxjs/toolkit";
-
 import { Skeleton } from "@components/components/ui/skeleton";
-
 import { useSelector, useDispatch } from "react-redux";
-
 import { uploadSingleProductImg } from "../../../../store/UploadImages/uploadImageSlice.js";
 
 const getSignedUrl = async (fileName) => {
@@ -121,6 +118,7 @@ const HandleMultiFileProductImagesUploads = ({ ToggleModal }) => {
             Drag 'n' drop some files here, or click to select files
           </p>
         </div>
+
         {/* Display Uploded files */}
 
         {isUploading && (
@@ -152,4 +150,4 @@ const HandleMultiFileProductImagesUploads = ({ ToggleModal }) => {
     </div>
   );
 };
-export default HandleMultiFileProductImagesUploads;
+export default React.memo(HandleMultiFileProductImagesUploads);

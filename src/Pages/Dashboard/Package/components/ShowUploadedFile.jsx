@@ -6,6 +6,7 @@ import fileSize from "../../../../utils/fileSize.js";
 
 const ShowUploadedFile = ({ Size, ImgUrl, TimeStamp, ISUploading, File }) => {
   if (!ImgUrl) return;
+
   const dispatch = useDispatch();
   var size = fileSize(Size);
 
@@ -13,7 +14,6 @@ const ShowUploadedFile = ({ Size, ImgUrl, TimeStamp, ISUploading, File }) => {
 
   return (
     <>
-      {JSON.stringify(bannerIMG)}
       <div className="file-wrapper flex justify-between border items-center gap-4 p-3 rounded-md">
         <div className="flex gap-4">
           <img loading="lazy" src={ImgUrl} className="size-12 rounded-md" />
@@ -29,7 +29,7 @@ const ShowUploadedFile = ({ Size, ImgUrl, TimeStamp, ISUploading, File }) => {
         <span
           className="size-10 flex justify-center items-center rounded-full hover:bg-gray-700 ease-in duration-100 transition-colors group"
           onClick={() => {
-            dispatch(removeSingleUploadedImg(File.id));
+            dispatch(removeSingleUploadedImg(File));
           }}
         >
           <X className="text-neutral-400 cursor-pointer group-hover:text-white" />
