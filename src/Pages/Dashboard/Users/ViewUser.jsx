@@ -264,8 +264,8 @@ const VIEW_SINGLE_USER = () => {
           <DialogHeader>
             <DialogTitle>Are you sure ?</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              This action cannot be undone. This will permanently delete user
+              account and remove user data from our servers.
               <span className=" mt-4 flex justify-end gap-3">
                 <Button
                   variant="secondary"

@@ -29,8 +29,8 @@ import { config } from "../../../config.js";
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Divyam",
+    email: "__",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: [
@@ -39,16 +39,6 @@ const data = {
       logo: GalleryVerticalEnd,
       plan: "Pvt Ltd",
     },
-    // {
-    //   name: "Acme Corp.",
-    //   logo: AudioWaveform,
-    //   plan: "Startup",
-    // },
-    // {
-    //   name: "Evil Corp.",
-    //   logo: Command,
-    //   plan: "Free",
-    // },
   ],
   navMain: [
     {
@@ -189,7 +179,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
       <SidebarRail />
