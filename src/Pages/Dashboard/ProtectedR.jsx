@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { isAuth } from "../../store/Auth/Authentication";
-import { useDispatch } from "react-redux";
-import { resetImageStore } from "../../store/UploadImages/uploadImageSlice.js";
+import isTokenExpired from "../../utils/isTokenExpired.js";
 const ProtectedRoute = ({ children }) => {
-  // RESET_IMAGE_STORE
-
   const token = useMemo(() => localStorage.getItem("AppID"), []);
+
+  const isTokenValid = isTokenExpired(token);
+
+  if (isTokenValid) {
+    return <Navigate to="/login" />;
+  }
 
   if (token) {
     return children;

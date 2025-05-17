@@ -164,7 +164,7 @@ const Packages = () => {
                 <TableRow>
                   <TableHead className="w-[100px]">id</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Published Package</TableHead>
                   <TableHead>Capacity</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Action</TableHead>
@@ -179,10 +179,14 @@ const Packages = () => {
                           {item.pkg_id}
                         </NavLink>
                       </TableCell>
-                      <TableCell>{item.name}</TableCell>
-                      <TableCell>{item.status}</TableCell>
-                      <TableCell>{item.capacity} People</TableCell>
-                      <TableCell>{item.price}</TableCell>
+                      <TableCell>{item?.name}</TableCell>
+                      <TableCell>
+                        {item.isVisible === true
+                          ? "Published"
+                          : "Not Publish yet"}
+                      </TableCell>
+                      <TableCell>{item?.capacity} People</TableCell>
+                      <TableCell>{item?.price}</TableCell>
 
                       <td className="text-left">
                         <DropdownMenu>
@@ -193,7 +197,7 @@ const Packages = () => {
                             <DropdownMenuLabel>Action</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="cursor-pointer">
-                              <NavLink to={`/dashboard/package/${item?._id}`}>
+                              <NavLink to={`/dashboard/package/${item?.slug}`}>
                                 View More
                               </NavLink>
                             </DropdownMenuItem>
@@ -201,7 +205,6 @@ const Packages = () => {
                               <button
                                 className="w-full text-left"
                                 onClick={() => {
-                                  console.log("ITEM-is", item);
                                   handleTwoFunc(item._id);
                                 }}
                               >
