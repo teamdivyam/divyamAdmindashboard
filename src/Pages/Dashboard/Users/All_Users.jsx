@@ -229,8 +229,6 @@ const All_Users = () => {
                 {searchResults && searchResults.length > 0 ? (
                   (() => {
                     return searchResults.map((User, id) => {
-                      // const UserArray = isObject(User);
-                      // console.log("Converted to Array ", UserArray);
                       return (
                         <UserCard
                           key={User._id}
