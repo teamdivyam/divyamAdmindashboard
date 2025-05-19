@@ -3,6 +3,12 @@ import { NavLink } from "react-router-dom";
 import { config } from "../../../../config.js";
 
 const UserCard = ({ User, isSearchResults }) => {
+  let userImgSrc = User?.avatar;
+
+  if (!userImgSrc) {
+    userImgSrc = "https://placehold.co/150x150?text=NA";
+  }
+
   return (
     <li
       id="userLists"
@@ -14,8 +20,8 @@ const UserCard = ({ User, isSearchResults }) => {
     >
       <div className="flex flex-row">
         <img
-          src={User?.avatar}
-          onError="this.onerror=null; this.src='https://placehold.co/150x150?text=NA' "
+          src={userImgSrc}
+          onError="this.onerror=null; this.src='https://placehold.co/150x150?text=NA'"
           className="size-16 rounded-full"
         />
 

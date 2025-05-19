@@ -82,20 +82,21 @@ const data = {
       ],
     },
     {
-      title: "Users",
-      url: "#",
-      icon: BookOpen,
+      title: "Packages",
+      url: `${config?.APP_URL}/dashboard/package"`,
+      icon: Group,
       items: [
         {
-          title: "All",
-          url: `${config?.APP_URL}/dashboard/users`,
+          title: "Packages",
+          url: `${config?.APP_URL}/dashboard/package`,
         },
         {
-          title: "Verified",
-          url: `${config?.APP_URL}/dashboard/verified-users`,
+          title: "Add New Packages",
+          url: `${config?.APP_URL}/dashboard/add-new-package`,
         },
       ],
     },
+
     {
       title: "Delivery Areas",
       url: `${config?.APP_URL}/dashboard/delivery-areas`,
@@ -113,17 +114,17 @@ const data = {
     },
 
     {
-      title: "Packages",
-      url: `${config?.APP_URL}/dashboard/package"`,
-      icon: Group,
+      title: "Users",
+      url: "#",
+      icon: BookOpen,
       items: [
         {
-          title: "Packages",
-          url: `${config?.APP_URL}/dashboard/package`,
+          title: "All",
+          url: `${config?.APP_URL}/dashboard/users`,
         },
         {
-          title: "Add New Packages",
-          url: `${config?.APP_URL}/dashboard/add-new-package`,
+          title: "Verified",
+          url: `${config?.APP_URL}/dashboard/verified-users`,
         },
       ],
     },
