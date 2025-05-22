@@ -19,7 +19,7 @@ const OrderedProduct = ({ Product }) => {
           <h1 className="ordered-product-heading">
             {Product?.productId?.name}
           </h1>
-          <p className="ordered-product-card-text-info w-[390px] text-sm font-thin">
+          <p className="ordered-product-card-text-info w-[390px] text-sm font-thin truncate">
             {Product?.productId?.description}
           </p>
         </div>
