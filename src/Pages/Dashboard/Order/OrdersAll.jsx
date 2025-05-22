@@ -267,7 +267,7 @@ export default function LinksTable() {
                       <TableCell>
                         {changeOrderStatusColor(order.orderStatus)}
                       </TableCell>
-                      {/* <TableCell>{order.payment.method}</TableCell> */}
+                      <TableCell>{order.transaction.paymentMethod}</TableCell>
                       <TableCell className="text-right">
                         {order.totalAmount}
                       </TableCell>
