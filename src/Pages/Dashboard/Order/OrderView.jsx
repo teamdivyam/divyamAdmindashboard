@@ -7,12 +7,12 @@ import { IndianRupee, CreditCard, ShoppingBag, Pencil } from "lucide-react";
 import OrderedProduct from "./components/OrderedProduct.jsx";
 import { useReactToPrint } from "react-to-print";
 import moment from "moment/moment.js";
-import { X } from "lucide-react";
+import { X, ShieldCheck } from "lucide-react";
 import Modal from "../Package/components/Modal.jsx";
+
 const OrderView = () => {
   const [order, setOrder] = useState(null);
   const { ORDER_ID } = useParams();
-
   const [isPhotoeViewer, setIsphotoViewer] = useState();
 
   const orderContainerRef = useRef(null);
@@ -133,7 +133,7 @@ const OrderView = () => {
                       </td>
 
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
+                        <p className="text-gray-400 whitespace-no-wrap">
                           <span className="flex items-center gap-2">
                             <img
                               src={`${config.IMAGE_CDN}/Uploads/users/${order.customer.avatar}`}
@@ -167,7 +167,7 @@ const OrderView = () => {
                       </td>
 
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
+                        <p className="text-gray-400 whitespace-no-wrap">
                           {order.customer.gender}
                         </p>
                       </td>
@@ -181,8 +181,13 @@ const OrderView = () => {
                       </td>
 
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          {order.payment.method}
+                        <p className="text-gray-400 whitespace-no-wrap">
+                          <div className="flex gap-1">
+                            {order.transaction.paymentMethod}
+                            {order.transaction.status == "success" ? (
+                              <ShieldCheck className="text-green-500 bg-neutral-100 rounded-full p-1" />
+                            ) : null}
+                          </div>
                         </p>
                       </td>
                     </tr>
@@ -195,7 +200,7 @@ const OrderView = () => {
                       </td>
 
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
+                        <p className="text-gray-400 whitespace-no-wrap">
                           {order.orderStatus}
                         </p>
                       </td>
@@ -209,7 +214,7 @@ const OrderView = () => {
                       </td>
 
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
+                        <p className="text-gray-400 whitespace-no-wrap">
                           {order?.customer?.address}
                         </p>
                       </td>
