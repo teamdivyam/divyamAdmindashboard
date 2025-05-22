@@ -228,7 +228,7 @@ const OrderView = () => {
                       </td>
 
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap font-semibold">
+                        <p className="text-gray-800 whitespace-no-wrap font-semibold">
                           <span className="flex items-center">
                             <IndianRupee className="size-4" />
                             {order.totalAmount}
@@ -244,7 +244,7 @@ const OrderView = () => {
 
           <div className="w-full flex justify-end">
             <Button
-              className="w-40 uppercase bg-amber-600 font-normal"
+              className="w-40 uppercase transition-colors duration-150 ease-in bg-amber-600 font-semibold tracking-widest "
               onClick={handlePrintOrder}
             >
               Print Now
