@@ -198,13 +198,15 @@ export default function LinksTable() {
     }
   }, [errors.searchKey]);
 
-  if (!Orders.length) {
-    return (
-      <span className="block lg:mt-20 text-center font-medium text-neutral-500">
-        Oops! There's no data to show right now. It looks like no orders are
-        available 😊
-      </span>
-    );
+  if (Orders) {
+    if (!Orders.length) {
+      return (
+        <span className="block lg:mt-20 text-center font-medium text-neutral-500">
+          Oops! There's no data to show right now. It looks like no orders are
+          available 😊
+        </span>
+      );
+    }
   }
 
   return (
