@@ -158,7 +158,7 @@ const OrderPending = () => {
                       {order.orderStatus}
                     </span>
                   </TableCell>
-                  <TableCell>{order.payment.method}</TableCell>
+                  <TableCell>{order?.transaction?.paymentMethod}</TableCell>
                   <TableCell className="text-right">
                     {order.totalAmount}
                   </TableCell>
