@@ -77,7 +77,7 @@ const OrderPending = () => {
         const res = await fetch(
           `${
             config.BACKEND_URL
-          }/api/admin/order-filter?filterBy=${`Completed`}&page=${
+          }/api/admin/order-filter?filterBy=${`Success`}&page=${
             state.page
           }&limit=${state.limit}`,
           {
@@ -159,7 +159,7 @@ const OrderPending = () => {
                       {order.orderStatus}
                     </span>
                   </TableCell>
-                  <TableCell>{order.payment.method}</TableCell>
+                  <TableCell>{order.transaction.paymentMethod}</TableCell>
                   <TableCell className="text-right">
                     {order.totalAmount}
                   </TableCell>
