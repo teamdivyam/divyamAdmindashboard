@@ -114,7 +114,7 @@ const DashBoardRoutes = () => {
           <Route path="order-complete" element={<OrderComplete />} />
           <Route path="order-cancelled" element={<OrderCancelled />} />
           <Route path="order-refunded" element={<OrderRefunded />} />
-          <Route path="order-edit/:ORDER_ID" element={<EditOrder />} />
+          <Route path="edit-order/:ORDER_ID" element={<EditOrder />} />
           <Route path="Order/:ORDER_ID" element={<OrderView />} />
           <Route path="package" element={<Packages />} />
           <Route path="add-new-package" element={<ADD_NEW_PKG />} />

@@ -5,7 +5,6 @@ import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
 import { config } from "../../../../config.js";
 import moment from "moment";
-
 import {
   Select,
   SelectContent,
@@ -19,6 +18,7 @@ import {
   CreditCard,
   ShoppingBag,
   UserRoundPen,
+  ShieldCheck,
 } from "lucide-react";
 
 import { useForm } from "react-hook-form";
@@ -200,6 +200,7 @@ const EditOrder = () => {
           </div>
 
           {/* display order-info */}
+
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             <div className="inline-block min-w-full shadow-sm rounded-sm overflow-hidden">
               <table className="min-w-full leading-normal">
@@ -210,7 +211,7 @@ const EditOrder = () => {
                     </td>
 
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      <p className="text-gray-900 whitespace-no-wrap">
+                      <p className="text-gray-400 whitespace-no-wrap">
                         <span className="flex items-center gap-2">
                           <img
                             src={`${config.IMAGE_CDN}/Uploads/users/${order.customer.avatar}`}
@@ -244,7 +245,7 @@ const EditOrder = () => {
                     </td>
 
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      <p className="text-gray-900 whitespace-no-wrap">
+                      <p className="text-gray-400 whitespace-no-wrap">
                         {order.customer.gender}
                       </p>
                     </td>
@@ -258,8 +259,126 @@ const EditOrder = () => {
                     </td>
 
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-400 whitespace-no-wrap">
+                        <div className="flex gap-1">
+                          {order.transaction.paymentMethod}
+                          {order.transaction.status == "success" ? (
+                            <ShieldCheck className="text-green-500 bg-neutral-100 rounded-full p-1" />
+                          ) : null}
+                        </div>
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <p className="text-gray-900 whitespace-no-wrap">
-                        {order.payment.method}
+                        Order status
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-400 whitespace-no-wrap">
+                        {order.orderStatus}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        Address:
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-400 whitespace-no-wrap">
+                        {order?.customer?.address}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap font-semibold">
+                        Total Amount:
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-800 whitespace-no-wrap font-semibold">
+                        <span className="flex items-center">
+                          <IndianRupee className="size-4" />
+                          {order.totalAmount}
+                        </span>
+                      </p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+            <div className="inline-block min-w-full shadow-sm rounded-sm overflow-hidden">
+              <table className="min-w-full leading-normal">
+                <tbody>
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">Name:</p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        <span className="flex items-center gap-2">
+                          <img
+                            src={`${config.IMAGE_CDN}/Uploads/users/${order.customer.avatar}`}
+                            className="size-7 rounded-full shadow-sm"
+                            onClick={() => {
+                              setIsphotoViewer((p) => !p);
+                            }}
+                          />
+                          {order?.customer?.fullName}
+                        </span>
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">Dob:</p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {moment(order?.customer?.dob).format("DD-MM-YYYY")}
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        Gender:
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {order?.customer?.gender}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        Payment mode:
+                      </p>
+                    </td>
+
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {order?.transaction?.paymentMethod}
                       </p>
                     </td>
                   </tr>
@@ -273,7 +392,7 @@ const EditOrder = () => {
 
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <p className="text-gray-900 whitespace-no-wrap">
-                        {order.orderStatus}
+                        {order?.orderStatus}
                       </p>
                     </td>
                   </tr>
@@ -303,7 +422,7 @@ const EditOrder = () => {
                       <p className="text-gray-900 whitespace-no-wrap font-semibold">
                         <span className="flex items-center">
                           <IndianRupee className="size-4" />
-                          {order.totalAmount}
+                          {order?.totalAmount}
                         </span>
                       </p>
                     </td>
@@ -311,7 +430,7 @@ const EditOrder = () => {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
 
           {/* Button-to-update- status */}
           <div className="flex justify-end">

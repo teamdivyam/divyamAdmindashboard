@@ -103,7 +103,7 @@ const OrderView = () => {
                   </span>
                 </Badge>
                 <NavLink
-                  to={`/dashBoard/order-edit/${ORDER_ID}`}
+                  to={`/dashBoard/edit-order/${ORDER_ID}`}
                   className="bg-orange-400 text-neutral-500 text-sm rounded-md p-1
                   edit-order-icon
                   "
