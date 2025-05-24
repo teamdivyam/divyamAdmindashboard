@@ -1,19 +1,31 @@
 import React, { useEffect, useMemo } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { isAuth } from "../../store/Auth/Authentication";
 import isTokenExpired from "../../utils/isTokenExpired.js";
+
 const ProtectedRoute = ({ children }) => {
-  const token = useMemo(() => localStorage.getItem("AppID"), []);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("AppID") || null;
+  const isTokenEXP = isTokenExpired(token);
 
-  const isTokenValid = isTokenExpired(token);
-
-  if (isTokenValid) {
-    return <Navigate to="/login" />;
-  }
-
-  if (token) {
+  if (token || isTokenEXP == false) {
     return children;
   }
+
+  if (isTokenEXP == false) {
+    return children;
+  }
+
+  useEffect(() => {
+    if (isTokenEXP) {
+      navigate("/login");
+      return;
+    }
+
+    if (isTokenEXP && token) {
+      return children;
+    }
+  }, [isTokenEXP, token]);
 
   return <Navigate to="/login" />;
 };
