@@ -7,7 +7,7 @@ import "react-photo-view/dist/react-photo-view.css";
 const GalleryGrid = ({ Images }) => {
   if (!Images) return;
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 flex-wrap">
       <PhotoProvider>
         {Images.map((img, index) => {
           return (
