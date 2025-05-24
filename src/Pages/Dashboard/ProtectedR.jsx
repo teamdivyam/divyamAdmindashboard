@@ -5,17 +5,27 @@ import isTokenExpired from "../../utils/isTokenExpired.js";
 
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
-  const token = useMemo(() => localStorage.getItem("AppID"), []);
+  const token = localStorage.getItem("AppID") || null;
+  const isTokenEXP = isTokenExpired(token);
 
-  const isTokenValid = isTokenExpired(token);
-
-  if (isTokenValid) {
-    navigate("/login");
-  }
-
-  if (token) {
+  if (token || isTokenEXP == false) {
     return children;
   }
+
+  if (isTokenEXP == false) {
+    return children;
+  }
+
+  useEffect(() => {
+    if (isTokenEXP) {
+      navigate("/login");
+      return;
+    }
+
+    if (isTokenEXP && token) {
+      return children;
+    }
+  }, [isTokenEXP, token]);
 
   return <Navigate to="/login" />;
 };
