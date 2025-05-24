@@ -183,8 +183,9 @@ const OrderView = () => {
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <p className="text-gray-400 whitespace-no-wrap">
                           <div className="flex gap-1">
-                            {order.transaction.paymentMethod}
-                            {order.transaction.status == "success" ? (
+                            {order.transaction.paymentMethod ||
+                              "Payment Failed"}
+                            {order?.transaction?.status == "success" ? (
                               <ShieldCheck className="text-green-500 bg-neutral-100 rounded-full p-1" />
                             ) : null}
                           </div>
