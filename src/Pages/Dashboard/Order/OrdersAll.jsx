@@ -267,7 +267,11 @@ export default function LinksTable() {
                       <TableCell>
                         {changeOrderStatusColor(order.orderStatus)}
                       </TableCell>
-                      <TableCell>{order?.transaction?.paymentMethod}</TableCell>
+                      <TableCell>
+                        {order?.transaction?.paymentMethod || (
+                          <span className="text-red-3400">Payment failed</span>
+                        )}
+                      </TableCell>
                       <TableCell className="text-right">
                         {order.totalAmount}
                       </TableCell>
