@@ -102,7 +102,7 @@ const HandleMultiFileProductImg = ({ ToggleModal, Images, Title }) => {
 
   return (
     <>
-      <div className="lg:min-w-[800px] ">
+      <div className="lg:min-w-[800px]  h-[350px]  overflow-y-auto">
         <div className="file_Upload__header border-b flex justify-between p-4">
           <h2 className="text-gray-600 text-2xl ">{Title}</h2>
           <span
