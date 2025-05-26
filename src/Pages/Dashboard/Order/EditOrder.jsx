@@ -175,18 +175,17 @@ const EditOrder = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Processing">Processing</SelectItem>
-                  <SelectItem value="Delivered">Delivered</SelectItem>
-                  <SelectItem value="Success">Success</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
-                  <SelectItem value="Returned">Returned</SelectItem>
-                  <SelectItem value="Refunded">Refunded</SelectItem>
-                  <SelectItem value="Failed">Failed</SelectItem>
-                  <SelectItem value="On Hold">On Hold</SelectItem>
+                  <SelectItem value="Packed">Packed</SelectItem>
+                  <SelectItem value="Shipped">shipped</SelectItem>
                   <SelectItem value="Out for Delivery">
                     Out for Delivery
                   </SelectItem>
-                  <SelectItem value="Declined">Declined</SelectItem>
+                  <SelectItem value="Delivered">Delivered</SelectItem>
+
+                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  <SelectItem value="Refunded">Refunded</SelectItem>
+
+                  <SelectItem value="Failed">Failed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
