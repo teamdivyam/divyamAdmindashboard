@@ -162,7 +162,7 @@ export default function LinksTable() {
     if (status == "Pending") {
       return (
         <>
-          <span className="text-orange-500">{status}</span>
+          <span className="text-green-400 animate-pulse ">{status}</span>
         </>
       );
     }
