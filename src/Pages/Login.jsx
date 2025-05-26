@@ -2,7 +2,6 @@ import { config } from "../../config.js";
 import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@components/components/ui/button";
 import ReCAPTCHA from "react-google-recaptcha";
-
 import {
   Card,
   CardContent,
@@ -13,13 +12,14 @@ import {
 
 import { Input } from "@components/components/ui/input";
 import { Label } from "@components/components/ui/label";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import { isAuth } from "../store/Auth/Authentication.js";
+import isTokenExpired from "../utils/isTokenExpired.js";
 
 const LogInFormValidationSchema = yup
   .object({
@@ -84,7 +84,7 @@ const LoginPage = () => {
     setLogIn();
   };
 
-  const token = useMemo(() => localStorage.getItem("AppID"), []);
+  const token = localStorage.getItem("AppID");
 
   const handleRecaptcha = (data) => {
     console.log("BY RECAPTCHA", data);
@@ -105,11 +105,9 @@ const LoginPage = () => {
     );
   };
 
-  useEffect(() => {
-    if (token) {
-      navigate("/dashboard");
-    }
-  }, []);
+  // if (token && isTokenExpired(token)) {
+  //   return <Navigate to="/dashboard" />;
+  // }
 
   return (
     <div className="bg-neutral-50 h-screen flex items-center">
