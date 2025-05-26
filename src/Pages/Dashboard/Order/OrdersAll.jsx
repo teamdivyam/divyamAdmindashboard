@@ -162,7 +162,7 @@ export default function LinksTable() {
     if (status == "Pending") {
       return (
         <>
-          <span className="text-orange-500">{status}</span>
+          <span className="text-green-400 animate-pulse ">{status}</span>
         </>
       );
     }
@@ -170,7 +170,13 @@ export default function LinksTable() {
     if (status == "Success" || status == "Delivered" || status == "Shipped") {
       return (
         <>
-          <span className="text-green-500">{status}</span>
+          <span className="text-green-500 ">
+            {/* //animate-pulse */}
+            <span className=" duration-500 ease-out">{status}</span>
+            <span className="ml-1 text-red-300 text-xs px-2 bg-neutral-100 rounded-full ">
+              new
+            </span>
+          </span>
         </>
       );
     }
