@@ -105,6 +105,10 @@ const LoginPage = () => {
     );
   };
 
+  if (token || !isTokenExpired(token)) {
+    return <Navigate to="/dashboard" />;
+  }
+
   // if (token && isTokenExpired(token)) {
   //   return <Navigate to="/dashboard" />;
   // }
