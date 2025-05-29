@@ -86,10 +86,6 @@ const LoginPage = () => {
 
   const token = localStorage.getItem("AppID");
 
-  const handleRecaptcha = (data) => {
-    console.log("BY RECAPTCHA", data);
-  };
-
   const ShowRecaptcha = () => {
     const isProductionModeEnable =
       config.PRODUCTION_MODE == "true" ? true : false;
@@ -105,13 +101,9 @@ const LoginPage = () => {
     );
   };
 
-  if (token || !isTokenExpired(token)) {
+  if (!isTokenExpired(token)) {
     return <Navigate to="/dashboard" />;
   }
-
-  // if (token && isTokenExpired(token)) {
-  //   return <Navigate to="/dashboard" />;
-  // }
 
   return (
     <div className="bg-neutral-50 h-screen flex items-center">
