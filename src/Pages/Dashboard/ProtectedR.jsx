@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import isTokenExpired from "../../utils/isTokenExpired.js";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("AppID");
-  if (!token || isTokenExpired(token)) {
+
+  if (isTokenExpired(token)) {
     return <Navigate to="/login" />;
   }
 
