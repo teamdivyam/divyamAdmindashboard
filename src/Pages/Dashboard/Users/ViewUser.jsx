@@ -234,10 +234,13 @@ const VIEW_SINGLE_USER = () => {
 
           {/* SHOW_ORDERS */}
           <div className="customerOrders mt-4">
-            {user && user.orders ? (
-              user.orders.map((orderId) => (
-                <SINGLE_ORDER_CARD Orderid={orderId} />
-              ))
+            {user && user?.orders.length ? (
+              <span className=" text-neutral-500 font-bold mb-4">Orders: </span>
+            ) : null}
+            {user && user?.orders ? (
+              user.orders.map((orderId) => {
+                return <SINGLE_ORDER_CARD Orderid={orderId} key={orderId} />;
+              })
             ) : (
               <p>There is no orders with this user Id</p>
             )}
