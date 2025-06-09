@@ -3,7 +3,7 @@ import { NavLink, useParams } from "react-router-dom";
 import { config } from "../../../../config.js";
 import { Badge } from "@components/components/ui/badge";
 import { Button } from "@components/components/ui/button";
-import { IndianRupee, CreditCard, ShoppingBag, Pencil } from "lucide-react";
+import { IndianRupee, Pencil } from "lucide-react";
 import OrderedProduct from "./components/OrderedProduct.jsx";
 import { useReactToPrint } from "react-to-print";
 import moment from "moment/moment.js";
