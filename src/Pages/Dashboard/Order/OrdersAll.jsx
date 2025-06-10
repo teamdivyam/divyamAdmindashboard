@@ -21,7 +21,6 @@ import {
 } from "@components/components/ui/pagination";
 
 import React, { useEffect, useReducer, useState } from "react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -147,36 +146,39 @@ export default function LinksTable() {
         );
 
         const data = await res.json();
-        setOrder(data);
-
-        console.log(data);
+        setOrder(data?.orders);
       } catch (error) {
         console.log(error);
       }
     };
-
     fetchData();
   }, [state.page]);
 
+  useEffect(() => {
+    if (errors?.searchKey?.message) {
+      toast.error(errors?.searchKey?.message);
+    }
+  }, [errors.searchKey]);
+
   const changeOrderStatusColor = (status) => {
-    if (status == "Pending") {
+    if (status === "Pending") {
+      // for fresh Orders after payment complete
       return (
         <>
-          <span className="text-green-400 animate-pulse ">{status}</span>
+          <span className="text-yellow-700">{status}</span>
         </>
       );
     }
 
-    if (status == "Success" || status == "Delivered" || status == "Shipped") {
+    if (
+      status == "Success" ||
+      status == "Delivered" ||
+      status == "Shipped" ||
+      status == "Out for Delivery"
+    ) {
       return (
         <>
-          <span className="text-green-500 ">
-            {/* //animate-pulse */}
-            <span className=" duration-500 ease-out">{status}</span>
-            <span className="ml-1 text-red-300 text-xs px-2 bg-neutral-100 rounded-full ">
-              new
-            </span>
-          </span>
+          <span className="text-green-500 ">{status}</span>
         </>
       );
     }
@@ -189,20 +191,29 @@ export default function LinksTable() {
       );
     }
 
-    // for others order status will return this one
+    if (status === "Processing") {
+      return (
+        <>
+          <span className="text-blue-500">{status}</span>
+        </>
+      );
+    }
 
+    if (status == "CANCELLATION_REQUESTED" || status === "REFUND_REQUESTED") {
+      return (
+        <>
+          <span className="text-yellow-700">{status}</span>
+        </>
+      );
+    }
+
+    // for others order status will return this one
     return (
       <>
-        <span className="text-slate-500 font-bold">{status}</span>
+        <span className="text-black font-bold">{status}</span>
       </>
     );
   };
-
-  useEffect(() => {
-    if (errors?.searchKey?.message) {
-      toast.error(errors?.searchKey?.message);
-    }
-  }, [errors.searchKey]);
 
   if (Orders) {
     if (!Orders.length) {
@@ -248,12 +259,12 @@ export default function LinksTable() {
                 <TableHead>Payment Method</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
                 <TableHead className="text-right">Transaction Date</TableHead>
-                {/* <TableHead className="text-right">Actions</TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
               {Orders && Orders.length > 0 ? (
                 Orders.map((order, idx) => {
+                  console.log(`Order ${order}`);
                   const date = new Date(order.createdAt);
                   const day = String(date.getDate()).padStart(2, "0");
                   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -264,7 +275,10 @@ export default function LinksTable() {
                   const formattedDate = `${day}/${month}/${year}`;
 
                   return (
-                    <TableRow key={idx}>
+                    <TableRow
+                      key={idx}
+                      className={order.isFreshOrder ? "bg-green-50" : null}
+                    >
                       <TableCell className="font-medium">
                         <NavLink to={`${order._id}`}>
                           {order.orderId.split("_").at(1)}
@@ -275,7 +289,7 @@ export default function LinksTable() {
                       </TableCell>
                       <TableCell>
                         {order?.transaction?.paymentMethod || (
-                          <span className="text-red-3400">Payment failed</span>
+                          <span className="text-red-3400">not available</span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
