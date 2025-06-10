@@ -258,22 +258,12 @@ export default function LinksTable() {
                 <TableHead>Status</TableHead>
                 <TableHead>Payment Method</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="text-right">Transaction Date</TableHead>
+                <TableHead className="text-right">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {Orders && Orders.length > 0 ? (
                 Orders.map((order, idx) => {
-                  console.log(`Order ${order}`);
-                  const date = new Date(order.createdAt);
-                  const day = String(date.getDate()).padStart(2, "0");
-                  const month = String(date.getMonth() + 1).padStart(2, "0");
-                  // Months are 0-indexed
-                  const year = date.getFullYear();
-
-                  // Format the date as dd/mm/yyyy
-                  const formattedDate = `${day}/${month}/${year}`;
-
                   return (
                     <TableRow
                       key={idx}
@@ -296,7 +286,7 @@ export default function LinksTable() {
                         {order.totalAmount}
                       </TableCell>
                       <TableCell className="text-right">
-                        {formattedDate}
+                        {order?.createdAt}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
