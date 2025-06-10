@@ -4,8 +4,11 @@ import { IndianRupee } from "lucide-react";
 const OrderedProduct = ({ Product }) => {
   if (!Product) return;
 
+  console.log(Product);
+
   // product-first-image
   const imgSRC = Product?.productId?.productImg[0]?.imgSrc;
+  console.log(imgSRC);
 
   return (
     <>
