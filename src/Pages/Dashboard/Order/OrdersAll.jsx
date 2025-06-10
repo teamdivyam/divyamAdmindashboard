@@ -279,7 +279,9 @@ export default function LinksTable() {
                       </TableCell>
                       <TableCell>
                         {order?.transaction?.paymentMethod || (
-                          <span className="text-red-3400">not available</span>
+                          <span className="text-neutral-500">
+                            Not available
+                          </span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
