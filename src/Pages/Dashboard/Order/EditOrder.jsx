@@ -33,18 +33,15 @@ const UPDATE_ORDER_STATUS_VALIDATE_SCHEMA = yup.object({
     .string()
     .oneOf(
       [
-        "Pending",
-        "Processing",
+        "Packed",
         "Shipped",
-        "Delivered",
-        "Success",
+        "Out for Delivery",
         "Cancelled",
+        "Delivered",
         "Returned",
         "Refunded",
         "Failed",
         "On Hold",
-        "Out for Delivery",
-        "Declined",
       ],
       "Invalid status"
     )
