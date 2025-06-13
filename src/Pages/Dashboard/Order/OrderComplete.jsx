@@ -156,12 +156,14 @@ const OrderPending = () => {
                   </TableCell>
                   <TableCell>
                     <span className="text-orange-500 font-semibold">
-                      {order.orderStatus}
+                      {(order && order?.orderStatus) || null}
                     </span>
                   </TableCell>
-                  <TableCell>{order.transaction.paymentMethod}</TableCell>
+                  <TableCell>
+                    {(order && order?.transaction?.amount) || "N/A"}
+                  </TableCell>
                   <TableCell className="text-right">
-                    {order.totalAmount}
+                    {(order && order?.totalAmount) || null}
                   </TableCell>
                   <TableCell className="text-right">{formattedDate}</TableCell>
                   <TableCell className="text-right">

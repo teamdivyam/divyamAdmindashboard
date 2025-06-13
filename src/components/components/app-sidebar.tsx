@@ -26,6 +26,7 @@ import {
 } from "@components/components/ui/sidebar";
 
 import { config } from "../../../config.js";
+console.log(config.APP_URL);
 
 const data = {
   user: {
