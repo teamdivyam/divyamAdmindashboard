@@ -7,7 +7,7 @@ import DashBoradIndexPage from "../Pages/Dashboard/Home";
 import LogOut from "../Pages/Dashboard/Logout";
 import ProtectedRoute from "../Pages/Dashboard/ProtectedR";
 
-const OrdersAll = lazy(() => import("../Pages/Dashboard/Order/OrdersAll"));
+const NEW_ORDERS = lazy(() => import("../Pages/Dashboard/Order/NewOrder"));
 const General = lazy(() => import("../Pages/Dashboard/Settings/General"));
 const Packages = lazy(() => import("../Pages/Dashboard/Package/Packages"));
 import Setting_Layout from "../Pages/Dashboard/Settings/SettingLayout";
@@ -84,9 +84,12 @@ const OrderRefunded = lazy(() =>
   import("../Pages/Dashboard/Order/OrderRefended")
 );
 
-import NewOrder from "../Pages/Dashboard/New-Order";
+const OrdersAll = lazy(() => import("../Pages/Dashboard/Order/OrdersAll_v2"));
+
 import NOT_FOUND from "../Pages/Dashboard/Not-found";
 import OrderCard from "../Pages/Dashboard/Users/Component/OrderCard";
+
+// ../Pages/Dashboard/Order/OrdersAll_v2
 
 const DashBoardRoutes = () => {
   return (
@@ -95,7 +98,6 @@ const DashBoardRoutes = () => {
         <Route path="/" element={<LoginForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/neworder" element={<NewOrder />} />
 
         <Route
           path="/dashboard"
@@ -109,7 +111,8 @@ const DashBoardRoutes = () => {
           <Route path="admin" element={<AdminProfile />} />
           <Route path="users" element={<All_Users />} />
           <Route path="user/:USER_ID" element={<VIEW_SINGLE_USER />} />
-          <Route path="order" element={<OrdersAll />} />
+          <Route path="new-orders" element={<NEW_ORDERS />} />
+          <Route path="orders" element={<OrdersAll />} />
           <Route path="order-pending" element={<OrderPending />} />
           <Route path="order-complete" element={<OrderComplete />} />
           <Route path="order-cancelled" element={<OrderCancelled />} />

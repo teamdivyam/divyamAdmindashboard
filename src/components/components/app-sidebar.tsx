@@ -61,9 +61,12 @@ const data = {
       items: [
         {
           title: "All",
-          url: `${config?.APP_URL}/dashboard/order`,
+          url: `${config?.APP_URL}/dashboard/orders`,
         },
-        ,
+        {
+          title: "New",
+          url: `${config?.APP_URL}/dashboard/new-orders`,
+        },
         {
           title: "Pending",
           url: `${config?.APP_URL}/dashboard/order-pending`,

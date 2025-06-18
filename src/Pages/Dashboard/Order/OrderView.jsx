@@ -6,10 +6,10 @@ import { Button } from "@components/components/ui/button";
 import { IndianRupee, Pencil, Phone } from "lucide-react";
 import OrderedProduct from "./components/OrderedProduct.jsx";
 import { useReactToPrint } from "react-to-print";
-import moment from "moment/moment.js";
-import { X, ShieldCheck, PhoneCall } from "lucide-react";
+import { X, ShieldCheck, PhoneCall, MoveHorizontal } from "lucide-react";
 import Modal from "../Package/components/Modal.jsx";
 import Loader from "../../../components/components/Loader.jsx";
+import moment from "moment/moment.js";
 
 const OrderView = () => {
   const [loading, setLoading] = useState(true);
@@ -29,6 +29,19 @@ const OrderView = () => {
     // pageStyle: "@page { size: 5.5in 4in }",
   });
 
+  const bookingDate = () => {
+    const startBookingDate = moment(order.booking?.startDate).format(
+      "DD-MM-YYYY"
+    );
+    const endBookingDate = moment(order.booking?.endDate).format("DD-MM-YYYY");
+
+    return (
+      <div className="flex gap-4">
+        {startBookingDate} <MoveHorizontal className="text-neutral-400" />
+        {endBookingDate}
+      </div>
+    );
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -164,13 +177,13 @@ const OrderView = () => {
                         <tr>
                           <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                             <p className="text-gray-900 whitespace-no-wrap">
-                              Dob:
+                              Booking Date:
                             </p>
                           </td>
 
                           <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap">
-                              {order?.customer.dob || "Not available"}
+                            <p className="text-gray-400 whitespace-no-wrap">
+                              {bookingDate()}
                             </p>
                           </td>
                         </tr>
