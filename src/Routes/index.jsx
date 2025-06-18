@@ -89,8 +89,6 @@ const OrdersAll = lazy(() => import("../Pages/Dashboard/Order/OrdersAll_v2"));
 import NOT_FOUND from "../Pages/Dashboard/Not-found";
 import OrderCard from "../Pages/Dashboard/Users/Component/OrderCard";
 
-// ../Pages/Dashboard/Order/OrdersAll_v2
-
 const DashBoardRoutes = () => {
   return (
     <Router>
