@@ -1,3 +1,16 @@
+import React, { useEffect, useReducer, useState } from "react";
+import { toast, Toaster } from "sonner";
+import { config } from "../../../../config";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@components/components/ui/dropdown-menu";
+import { EllipsisVertical, MoveHorizontal } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -7,9 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@components/components/ui/table";
-import { Search } from "lucide-react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+
 import {
   Pagination,
   PaginationContent,
@@ -19,33 +30,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@components/components/ui/pagination";
-
-import React, { useEffect, useReducer, useState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@components/components/ui/dropdown-menu";
-
-import { config } from "../../../../config.js";
-import { Toaster } from "@components/components/ui/sonner";
-
-import { toast } from "sonner";
-
-import { EllipsisVertical } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-
-const SEARCH_ORDER_VALIDATE_SCHEMA = yup.object({
-  searchKey: yup
-    .string()
-    .min(5, "Invalid order id")
-    .max(20)
-    .required("Invalid order id."),
-});
+import { NavLink } from "react-router-dom";
+import moment from "moment";
 
 const initialState = {
   page: 1,
@@ -78,64 +64,18 @@ const Reducer = (state, action) => {
     }
   }
 };
-
-export default function LinksTable() {
+const OrdersAll = () => {
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [Orders, setOrder] = useState(null);
-  const getTOKEN = localStorage.getItem("AppID");
-  const navigate = useNavigate();
-
   const [state, dispatch] = useReducer(Reducer, initialState);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    mode: "all",
-    resolver: yupResolver(SEARCH_ORDER_VALIDATE_SCHEMA),
-    defaultValues: {
-      searchKey: "",
-    },
-  });
-
-  const onSubmit = (data) => {
-    // console.log(data);
-    const searchOrder = async () => {
-      try {
-        const res = await fetch(
-          `${config && config.BACKEND_URL}/api/admin/search-orders?searchKey=${
-            data?.searchKey
-          }`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${getTOKEN}`,
-              Accept: "application/json, application/xml",
-            },
-          }
-        );
-
-        const results = await res.json();
-
-        if (results.success === true) {
-          navigate(`/dashboard/order/${results._id}`);
-        } else {
-          toast.error("Invalid order id");
-        }
-      } catch (error) {
-        toast.error("please try again later.");
-      }
-    };
-
-    searchOrder();
-  };
-
+  const getTOKEN = localStorage.getItem("AppID");
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
         const res = await fetch(
-          `${config.BACKEND_URL}/api/admin/order?page=${state?.page}&limit=${state?.limit}`,
+          `${config.BACKEND_URL}/api/admin/orders?page=${state.page}&limit=${state.limit}`,
           {
             method: "GET",
             headers: {
@@ -144,21 +84,18 @@ export default function LinksTable() {
             },
           }
         );
-
-        const data = await res.json();
-        setOrder(data?.orders);
+        const result = await res.json();
+        if (!res.ok) {
+          toast.error("Can't able to fetch Orders");
+        }
+        console.log(result);
+        // on success
+        setOrder(result?.orders);
       } catch (error) {
-        console.log(error);
+        toast.error(error);
       }
-    };
-    fetchData();
-  }, [state.page]);
-
-  useEffect(() => {
-    if (errors?.searchKey?.message) {
-      toast.error(errors?.searchKey?.message);
-    }
-  }, [errors.searchKey]);
+    })();
+  }, [state?.page]);
 
   const changeOrderStatusColor = (status) => {
     if (status === "Pending") {
@@ -229,54 +166,48 @@ export default function LinksTable() {
   return (
     <>
       {Orders && (
-        <div className="w-full ">
+        <div className="w-full p-4">
           <Toaster richColors />
-          <form
-            className="flex justify-center  w-full px-3 py-4"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <input
-              type="text"
-              name="search"
-              id="search"
-              placeholder="Search with order id"
-              className="border px-4 shadow-sm  w-full rounded-lg text-lg rounded-r-none dark:bg-slate-600"
-              {...register("searchKey")}
-            />
-            <button
-              type="submit"
-              className="bg-orange-400 rounded-md p-2 text-white rounded-l-none"
-            >
-              <Search className="size-8" />
-            </button>
-          </form>
           <Table>
             <TableCaption>.</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[300px]">Order Id</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Booking Dates</TableHead>
                 <TableHead>Payment Method</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="text-right">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {Orders && Orders.length > 0 ? (
                 Orders.map((order, idx) => {
+                  const startBookingDate = moment(
+                    order.booking?.startDate
+                  ).format("DD-MM-YYYY");
+                  const endBookingDate = moment(order.booking?.endDate).format(
+                    "DD-MM-YYYY"
+                  );
                   return (
-                    <TableRow
-                      key={idx}
-                      className={order.isFreshOrder ? "bg-green-50" : null}
-                    >
+                    <TableRow key={idx}>
                       <TableCell className="font-medium">
-                        <NavLink to={`${order._id}`}>
+                        <NavLink to={`/dashboard/order/${order._id}`}>
                           {order.orderId.split("_").at(1)}
                         </NavLink>
                       </TableCell>
+
                       <TableCell>
                         {changeOrderStatusColor(order.orderStatus)}
                       </TableCell>
+
+                      <TableCell className="">
+                        <div className="flex gap-4 font-semibold text-neutral-500">
+                          {startBookingDate}{" "}
+                          <MoveHorizontal className="text-neutral-400" />{" "}
+                          {endBookingDate}
+                        </div>
+                      </TableCell>
+
                       <TableCell>
                         {order?.transaction?.paymentMethod || (
                           <span className="text-neutral-500">
@@ -285,10 +216,7 @@ export default function LinksTable() {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        {order.totalAmount}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {order?.createdAt}
+                        {order?.totalAmount}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
@@ -386,4 +314,6 @@ export default function LinksTable() {
       )}
     </>
   );
-}
+};
+
+export default OrdersAll;
