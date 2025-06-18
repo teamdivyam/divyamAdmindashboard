@@ -117,7 +117,7 @@ const OrderView = () => {
                       variant="destructive"
                       className="bg-white text-neutral-500 hover:bg-white"
                     >
-                      <span className="inline-block rounded-full  text-neutral-400 text-sm font-normal  uppercase">
+                      <span className="inline-block rounded-full  text-neutral-400 text-sm font-normal  capitalize">
                         {order && order.orderStatus}
                       </span>
                     </Badge>
