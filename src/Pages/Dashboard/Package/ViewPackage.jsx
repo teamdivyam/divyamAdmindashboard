@@ -29,6 +29,7 @@ import ModalUploadFiles from "./components/Modal.jsx";
 import HandleMultiFileBannerImg from "./components/ImageGrid/UpdateImg/HandleMultiFile-BannerImages.jsx";
 import HandleMultiFileProductImg from "./components/ImageGrid/UpdateImg/HandleMultiFIleProductImg.jsx";
 import {
+  resetImageStore,
   uploadSingleImg,
   uploadSingleProductImg,
 } from "../../../store/UploadImages/uploadImageSlice.js";
@@ -61,6 +62,9 @@ const PACKAGE_UPDATE_VALIDATE_SCHEMA = yup.object({
 
 const Reducer = (state, action) => {
   switch (action.type) {
+    case "RESET": {
+      return { ...initialState };
+    }
     case "ADD_PKG_NAME":
       {
         return { ...state, name: action.payload };
@@ -88,6 +92,7 @@ const Reducer = (state, action) => {
     case "SET_PRODUCT_IMG": {
       return { ...state, productImgs: action.payload };
     }
+
     case "SET_STAR_RATING": {
       return { ...state, startCount: action.payload };
     }
@@ -133,8 +138,8 @@ const Reducer = (state, action) => {
 
 const ViewPackage = () => {
   const { PKG_ID } = useParams();
+  // reset old state
   const bannerImgState = useSelector((state) => state.UploadedImgs.banners);
-
   const productImgState = useSelector(
     (state) => state.UploadedImgs.productImages
   );
@@ -340,6 +345,8 @@ const ViewPackage = () => {
 
   // dispatch-all-already-uploaded-imags
   useEffect(() => {
+    // reset here
+    dispatchReduxState(resetImageStore());
     const bannerImgs = state.bannerImgs;
     const productImgs = state.productImgs;
 
@@ -365,6 +372,8 @@ const ViewPackage = () => {
       dispatchReduxState(uploadSingleProductImg(payload));
     });
   }, [state.bannerImgs, state.productImgs]);
+
+  // reset images
 
   return (
     <div>

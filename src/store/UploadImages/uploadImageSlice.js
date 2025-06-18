@@ -58,9 +58,8 @@ const UploadImageSlice = createSlice({
         },
 
         resetImageStore: (state, action) => {
-            console.log("RESET...");
             return initialState
-        }
+        },
     }
 });
 
@@ -71,5 +70,6 @@ export const {
     removeSingleUploadedImg,
     uploadSingleProductImg,
     removeSingleProductImg,
-    resetImageStore
+    resetImageStore,
+    getAllImages
 } = UploadImageSlice.actions;
