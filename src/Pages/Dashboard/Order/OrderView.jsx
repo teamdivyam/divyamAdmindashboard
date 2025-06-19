@@ -107,7 +107,7 @@ const OrderView = () => {
                 <div className="cardHeader flex justify-between">
                   <Badge
                     variant="destructive"
-                    className="bg-orange-400 hover:bg-orange-500 ease-in transition-colors cursor-pointer"
+                    className="bg-orange-400 hover:bg-orange-500 ease-in transition-colors cursor-pointer orderIdBadge"
                   >
                     {order && ` OrderID: ${order.orderId}`}
                   </Badge>
@@ -115,9 +115,9 @@ const OrderView = () => {
                   <div className="flex gap-2 ">
                     <Badge
                       variant="destructive"
-                      className="bg-white text-neutral-500 hover:bg-white"
+                      className="bg-white text-neutral-500 hover:bg-white orderStatusBadge"
                     >
-                      <span className="inline-block rounded-full  text-neutral-400 text-sm font-normal  capitalize">
+                      <span className="inline-block rounded-full  text-neutral-400 text-sm font-normal  capitalize ">
                         {order && order.orderStatus}
                       </span>
                     </Badge>
@@ -187,19 +187,6 @@ const OrderView = () => {
                             </p>
                           </td>
                         </tr>
-                        <tr>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap">
-                              Gender:
-                            </p>
-                          </td>
-
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p className="text-gray-400 whitespace-no-wrap">
-                              {order?.customer?.gender || "not available"}
-                            </p>
-                          </td>
-                        </tr>
 
                         <tr>
                           <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -231,6 +218,20 @@ const OrderView = () => {
                           <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                             <p className="text-gray-400 whitespace-no-wrap">
                               {order && order.orderStatus}
+                            </p>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap">
+                              Email:
+                            </p>
+                          </td>
+
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            <p className="text-gray-400 whitespace-no-wrap">
+                              {order?.customer?.email || "not available"}
                             </p>
                           </td>
                         </tr>

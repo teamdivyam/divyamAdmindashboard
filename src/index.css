@@ -153,10 +153,16 @@ input[type="number"]::-webkit-outer-spin-button {
   .edit-order-icon {
     display: none;
   }
+  .orderIdBadge,
+  .orderStatusBadge {
+    background-color: #fff;
+    color: #000000;
+    border: none;
+    box-shadow: none;
+  }
 }
 
 /* animate-Orders inside user profile */
-
 @keyframes animate-orders-keyframe {
   from {
     opacity: 0;
@@ -167,8 +173,6 @@ input[type="number"]::-webkit-outer-spin-button {
     transform: translateY(10px);
   }
 }
-
-/* animation: fadeIn 0.2s ease-in forwards; */
 
 .animate-order {
   animation: animate-orders-keyframe 0.8s ease-in-out forwards;
