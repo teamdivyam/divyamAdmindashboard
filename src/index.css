@@ -154,3 +154,22 @@ input[type="number"]::-webkit-outer-spin-button {
     display: none;
   }
 }
+
+/* animate-Orders inside user profile */
+
+@keyframes animate-orders-keyframe {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+}
+
+/* animation: fadeIn 0.2s ease-in forwards; */
+
+.animate-order {
+  animation: animate-orders-keyframe 0.8s ease-in-out forwards;
+}

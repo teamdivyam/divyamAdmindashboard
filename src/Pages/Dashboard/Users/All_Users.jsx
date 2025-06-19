@@ -11,7 +11,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { config } from "../../../../config.js";
 import UserCard from "./UserCard.jsx";
 import { useForm } from "react-hook-form";
-import { Button } from "@components/components/ui/button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import debounce from "lodash.debounce";
@@ -156,8 +155,6 @@ const All_Users = () => {
         );
 
         if (!response.ok) {
-          console.log("Toaster..");
-          // setErr(true);
           setUsers([]); // No need to use a function here, just directly set the empty array
           return; // Early return if the response is not okay
         }

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Badge } from "@components/components/ui/badge";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
+import Loader from "../../../components/components/Loader.jsx";
 
 import { UserRound, MapPin, Phone, Calendar, MapPinHouse } from "lucide-react";
 import { config } from "../../../../config.js";
@@ -117,7 +118,9 @@ const VIEW_SINGLE_USER = () => {
         const data = await response.json();
 
         setErr(false);
-        setUser(data);
+        setTimeout(() => {
+          setUser(data);
+        }, 200);
       } catch (error) {
         setErr(true);
       }
@@ -129,137 +132,149 @@ const VIEW_SINGLE_USER = () => {
     <>
       <Toaster />
 
-      <div
-        className="bg-neutral-100 dark:bg-gray-700 rounded-lg border p-6 mx-auto w-1/2"
-        id="oderPreview"
-      >
-        <div className="cardHeader flex justify-between">
-          <Badge
-            variant="destructive"
-            className="bg-orange-400 py-1 cursor-pointer hover:bg-orange-400"
-          >
-            <UserRound />
-          </Badge>
-
-          <Badge
-            variant="destructive"
-            className="bg-white text-neutral-500 hover:bg-white"
-          >
-            <span className="font-">Joined Date:</span>
-            <span
-              className="inline-block uppercase pl-1 rounded-full  text-neutral-500
-            font-medium 
-            "
-            >
-              {`${user && user.createdAt}`}
-            </span>
-          </Badge>
+      {!user ? (
+        <div className="mt-36">
+          <Loader />
         </div>
+      ) : (
+        <div
+          className="bg-neutral-100 dark:bg-gray-700 rounded-lg border p-6 mx-auto w-1/2"
+          id="oderPreview"
+        >
+          <div className="cardHeader flex justify-between">
+            <Badge
+              variant="destructive"
+              className="bg-orange-400 py-1 cursor-pointer hover:bg-orange-400"
+            >
+              <UserRound />
+            </Badge>
 
-        <div className="cardBody bg-white dark:bg-slate-800 rounded-md border p-6 mt-6">
-          <div className="userProfile flex flex-row ">
-            {user && user.avatar ? (
-              <img
-                src={user?.avatar}
-                className="w-[150px] h-[150px] object-cover rounded-sm shadow-sm"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://placehold.co/300x300?text=NA";
-                }}
-                alt="profile-image"
-              />
-            ) : null}
+            <Badge
+              variant="destructive"
+              className="bg-white text-neutral-500 hover:bg-white"
+            >
+              <span className="font-">Joined Date:</span>
+              <span
+                className="inline-block uppercase pl-1 rounded-full  text-neutral-500
+              font-medium 
+              "
+              >
+                {`${user && user.createdAt}`}
+              </span>
+            </Badge>
+          </div>
 
-            <div className="profileText pt-10 pl-10">
-              <h2 className="font-medium text-neutral-600 text-3xl flex items-center">
-                {user && user.fullName ? user.fullName : "Not Available"}
-                <span
-                  title={user && user.gender == "male" ? "Male" : "Female"}
-                  className="rounded-full size-8 flex justify-center items-center ml-2 p-2 text-white bg-orange-400"
-                >
-                  {user && user.gender == "male" ? (
-                    <Gender_MALE_ICON />
+          <div className="cardBody bg-white dark:bg-slate-800 rounded-md border p-6 mt-6">
+            <div className="userProfile flex flex-row ">
+              {user && user.avatar ? (
+                <img
+                  src={user?.avatar}
+                  className="w-[150px] h-[150px] object-cover rounded-sm shadow-sm"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://placehold.co/300x300?text=NA";
+                  }}
+                  alt="profile-image"
+                />
+              ) : null}
+
+              <div className="profileText pt-10 pl-10">
+                <h2 className="font-medium text-neutral-600 text-3xl flex items-center">
+                  {user && user.fullName ? user.fullName : "Not Available"}
+                  <span
+                    title={user && user.gender == "male" ? "Male" : "Female"}
+                    className="rounded-full size-8 flex justify-center items-center ml-2 p-2 text-white bg-orange-400"
+                  >
+                    {user && user.gender == "male" ? (
+                      <Gender_MALE_ICON />
+                    ) : (
+                      <Gender_Female_Icon />
+                    )}
+                  </span>
+                </h2>
+                <p className="mobileNum flex items-center pt-2 text-neutral-400">
+                  {user && user.mobileNum ? (
+                    <>
+                      <Phone />
+                      <span className="pl-2">{user.mobileNum}</span>
+                    </>
                   ) : (
-                    <Gender_Female_Icon />
+                    "Mobile number is not available"
                   )}
+                </p>
+
+                <p className="age  mt-2  flex items-center  text-neutral-400">
+                  {user && user.dob ? (
+                    <>
+                      <Calendar />
+                      <span className="pl-2 font-normal">
+                        {moment(user.dob).format("DD-MM-YYYY")}
+                      </span>
+                    </>
+                  ) : (
+                    "Date of birth is not available"
+                  )}
+                </p>
+
+                <p className="age  mt-2  flex items-center  text-neutral-400">
+                  {user && user.areaPin ? (
+                    <>
+                      <MapPinHouse />
+                      <span className="pl-2 font-normal">{user.areaPin}</span>
+                    </>
+                  ) : (
+                    "Area pin code is not available"
+                  )}
+                </p>
+
+                <p className="mt-2 flex text-neutral-400 ">
+                  {user && user.address ? (
+                    <>
+                      <MapPin />
+                      <span className="pl-2 capitalize">{`${user.address}  `}</span>
+                    </>
+                  ) : (
+                    "user Address is not available"
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* SHOW_ORDERS */}
+            <div className="customerOrders mt-4">
+              {user && user?.orders.length ? (
+                <span className=" text-neutral-500 font-semibold pb-1 block">
+                  Orders:{" "}
                 </span>
-              </h2>
-              <p className="mobileNum flex items-center pt-2 text-neutral-400">
-                {user && user.mobileNum ? (
-                  <>
-                    <Phone />
-                    <span className="pl-2">{user.mobileNum}</span>
-                  </>
+              ) : null}
+              <div className="flex flex-col gap-4">
+                {user && user?.orders ? (
+                  user.orders.map((orderId) => {
+                    return (
+                      <SINGLE_ORDER_CARD Orderid={orderId} key={orderId} />
+                    );
+                  })
                 ) : (
-                  "Mobile number is not available"
+                  <p>There is no orders with this user Id</p>
                 )}
-              </p>
-
-              <p className="age  mt-2  flex items-center  text-neutral-400">
-                {user && user.dob ? (
-                  <>
-                    <Calendar />
-                    <span className="pl-2 font-normal">
-                      {moment(user.dob).format("DD-MM-YYYY")}
-                    </span>
-                  </>
-                ) : (
-                  "Date of birth is not available"
-                )}
-              </p>
-
-              <p className="age  mt-2  flex items-center  text-neutral-400">
-                {user && user.areaPin ? (
-                  <>
-                    <MapPinHouse />
-                    <span className="pl-2 font-normal">{user.areaPin}</span>
-                  </>
-                ) : (
-                  "Area pin code is not available"
-                )}
-              </p>
-
-              <p className="mt-2 flex text-neutral-400 ">
-                {user && user.address ? (
-                  <>
-                    <MapPin />
-                    <span className="pl-2 capitalize">{`${user.address}  `}</span>
-                  </>
-                ) : (
-                  "user Address is not available"
-                )}
-              </p>
+              </div>
             </div>
           </div>
 
-          {/* SHOW_ORDERS */}
-          <div className="customerOrders mt-4">
-            {user && user?.orders.length ? (
-              <span className=" text-neutral-500 font-bold mb-4">Orders: </span>
-            ) : null}
-            {user && user?.orders ? (
-              user.orders.map((orderId) => {
-                return <SINGLE_ORDER_CARD Orderid={orderId} key={orderId} />;
-              })
-            ) : (
-              <p>There is no orders with this user Id</p>
-            )}
+          {/* DELETE USER PROFILE */}
+          <div id="userProfileDeleteAction" className="w-full flex justify-end">
+            <Button
+              variant="destructive"
+              className="mt-8 flex justify-center items-center w-32 "
+              onClick={() => {
+                setOpen((prev) => !prev);
+              }}
+            >
+              Delete
+            </Button>
           </div>
         </div>
-
-        {/* DELETE USER PROFILE */}
-        <div id="userProfileDeleteAction" className="w-full flex justify-end">
-          <Button
-            variant="destructive"
-            className="mt-8 flex justify-center items-center w-32 "
-            onClick={() => {
-              setOpen((prev) => !prev);
-            }}
-          >
-            Delete
-          </Button>
-        </div>
-      </div>
+      )}
 
       {/*__Model__*/}
       <Dialog open={open} onOpenChange={setOpen}>
