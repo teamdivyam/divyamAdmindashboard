@@ -312,6 +312,36 @@ const EditOrder = () => {
                         </td>
                       </tr>
 
+                      {order && order?.referralCode ? (
+                        <tr>
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap">
+                              ReferralCode
+                            </p>
+                          </td>
+
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            <p className="text-gray-400 whitespace-no-wrap">
+                              {order && order.referralCode}
+                            </p>
+                          </td>
+                        </tr>
+                      ) : null}
+
+                      <tr>
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <p className="text-gray-900 whitespace-no-wrap">
+                            Email:
+                          </p>
+                        </td>
+
+                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <p className="text-gray-400 whitespace-no-wrap">
+                            {order?.customer?.email || "not available"}
+                          </p>
+                        </td>
+                      </tr>
+
                       <tr>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">
