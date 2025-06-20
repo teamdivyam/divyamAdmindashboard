@@ -3,6 +3,7 @@ import { Badge } from "@components/components/ui/badge";
 import { Button } from "@components/components/ui/button";
 import { Toaster } from "@components/components/ui/sonner";
 import { toast } from "sonner";
+import moment from "moment";
 import { config } from "../../../../config.js";
 import {
   Select,
@@ -19,6 +20,7 @@ import {
   UserRoundPen,
   ShieldCheck,
   Phone,
+  MoveHorizontal,
 } from "lucide-react";
 
 import { useForm } from "react-hook-form";
@@ -112,6 +114,20 @@ const EditOrder = () => {
 
     // Call __Action to submit data on server..
     postDataOnServer();
+  };
+
+  const bookingDate = () => {
+    const startBookingDate = moment(order.booking?.startDate).format(
+      "DD-MM-YYYY"
+    );
+    const endBookingDate = moment(order.booking?.endDate).format("DD-MM-YYYY");
+
+    return (
+      <div className="flex gap-4">
+        {startBookingDate} <MoveHorizontal className="text-neutral-400" />
+        {endBookingDate}
+      </div>
+    );
   };
 
   useEffect(() => {
@@ -237,16 +253,17 @@ const EditOrder = () => {
                       <tr>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">
-                            Dob:
+                            Booking Date:
                           </p>
                         </td>
 
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          <p className="text-gray-900 whitespace-no-wrap">
-                            {order?.customer.dob || "Not available"}
+                          <p className="text-gray-400 whitespace-no-wrap">
+                            {bookingDate()}
                           </p>
                         </td>
                       </tr>
+
                       <tr>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           <p className="text-gray-900 whitespace-no-wrap">
@@ -326,9 +343,9 @@ const EditOrder = () => {
                         </td>
 
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          <p className="text-gray-800 whitespace-no-wrap font-semibold">
+                          <p className="text-gray-600 whitespace-no-wrap text-xl font-semibold">
                             <span className="flex items-center">
-                              <IndianRupee className="size-4" />{" "}
+                              <IndianRupee className="size-8" />{" "}
                               {order && order?.transaction?.amount}
                             </span>
                           </p>

@@ -267,7 +267,7 @@ const OrderView = () => {
                           </td>
 
                           <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p className="text-gray-800 whitespace-no-wrap font-semibold">
+                            <p className="text-gray-800 whitespace-no-wrap text-xl font-semibold">
                               <span className="flex items-center">
                                 <IndianRupee className="size-4" />{" "}
                                 {order && order?.transaction?.amount}
