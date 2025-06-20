@@ -14,7 +14,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@components/components/ui/dialog";
 
 import { Switch } from "@components/components/ui/switch";
@@ -35,7 +34,6 @@ import {
 } from "../../../store/UploadImages/uploadImageSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { NumericFormat } from "react-number-format";
-import fileSize from "../../../utils/fileSize";
 import getFileNameFromImgURL from "../../../utils/extractFileNameFromImgUrl.js";
 
 const initialState = {

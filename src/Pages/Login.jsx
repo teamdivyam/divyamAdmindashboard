@@ -1,5 +1,5 @@
 import { config } from "../../config.js";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@components/components/ui/button";
 import ReCAPTCHA from "react-google-recaptcha";
 import {

@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { config } from "../../../../config.js";
 import UserCard from "./UserCard.jsx";

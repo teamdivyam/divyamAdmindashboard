@@ -59,6 +59,7 @@
     "react-router-dom": "^7.0.2",
     "react-to-print": "^3.0.5",
     "recharts": "^2.15.0",
+    "rollup-plugin-visualizer": "^6.0.3",
     "shadcn-dropzone": "^0.2.1",
     "slugify": "^1.6.6",
     "sonner": "^0.4.0",
