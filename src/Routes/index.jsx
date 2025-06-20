@@ -120,7 +120,6 @@ const DashBoardRoutes = () => {
           <Route path="employee/:EMP_ID" element={<ViewManager />} />
           <Route path="package/:PKG_ID" element={<ViewPackage />} />
           <Route path="/dashboard/logout" element={<LogOut />} />
-
           <Route
             path="/dashboard/add-new-area"
             element={<Add_Delivery_Area />}
