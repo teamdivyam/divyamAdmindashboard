@@ -6,7 +6,6 @@ import DashBoardLayout from "../Pages/Dashboard";
 import DashBoradIndexPage from "../Pages/Dashboard/Home";
 import LogOut from "../Pages/Dashboard/Logout";
 import ProtectedRoute from "../Pages/Dashboard/ProtectedR";
-
 const NEW_ORDERS = lazy(() => import("../Pages/Dashboard/Order/NewOrder"));
 const General = lazy(() => import("../Pages/Dashboard/Settings/General"));
 const Packages = lazy(() => import("../Pages/Dashboard/Package/Packages"));
