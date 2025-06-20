@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
-import SearchResults from "./AgentSearchResults";
 import AgentSearchResults from "./AgentSearchResults";
 import { config } from "../../../../config.js";
 

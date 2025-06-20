@@ -10,19 +10,18 @@ import ProtectedRoute from "../Pages/Dashboard/ProtectedR";
 const NEW_ORDERS = lazy(() => import("../Pages/Dashboard/Order/NewOrder"));
 const General = lazy(() => import("../Pages/Dashboard/Settings/General"));
 const Packages = lazy(() => import("../Pages/Dashboard/Package/Packages"));
-import Setting_Layout from "../Pages/Dashboard/Settings/SettingLayout";
-
+const Setting_Layout = lazy(() =>
+  import("../Pages/Dashboard/Settings/SettingLayout")
+);
 const ADD_NEW_PKG = lazy(() =>
   import("../Pages/Dashboard/Package/ADD_NEW_PKG")
 );
 const OrderPending = lazy(() =>
   import("../Pages/Dashboard/Order/OrderPending")
 );
-
 const OrderComplete = lazy(() =>
   import("../Pages/Dashboard/Order/OrderComplete")
 );
-
 const VIEW_SINGLE_USER = lazy(() =>
   import("../Pages/Dashboard/Users/ViewUser")
 );
@@ -83,11 +82,8 @@ const OrderCancelled = lazy(() =>
 const OrderRefunded = lazy(() =>
   import("../Pages/Dashboard/Order/OrderRefended")
 );
-
 const OrdersAll = lazy(() => import("../Pages/Dashboard/Order/OrdersAll_v2"));
-
-import NOT_FOUND from "../Pages/Dashboard/Not-found";
-import OrderCard from "../Pages/Dashboard/Users/Component/OrderCard";
+const NOT_FOUND = lazy(() => import("../Pages/Dashboard/Not-found"));
 
 const DashBoardRoutes = () => {
   return (
@@ -155,7 +151,6 @@ const DashBoardRoutes = () => {
             <Route path="backup" element={<Backup />} />
           </Route>
         </Route>
-        <Route path="orderCard" element={<OrderCard />} />
         <Route path="*" element={<NOT_FOUND />} />
       </Routes>
     </Router>
