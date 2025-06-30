@@ -490,6 +490,10 @@ const ADD_NEW_PKG = () => {
                 />
               </div>
 
+              <div className="grid-gap-2">
+                <Label htmlFor="price">Set Discount</Label>
+              </div>
+
               <div className="grid_gap-2">
                 <div
                   className="text-sm text-neutral-400 border w-full text-left rounded-lg p-3 cursor-pointer"

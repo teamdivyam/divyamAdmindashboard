@@ -7,7 +7,6 @@ const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("AppID");
   const imagesState = useSelector((state) => state?.UploadedImgs);
   // reset store
-  console.log(imagesState);
 
   if (isTokenExpired(token)) {
     return <Navigate to="/login" />;

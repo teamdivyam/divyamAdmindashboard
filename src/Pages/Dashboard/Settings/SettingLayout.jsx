@@ -12,6 +12,21 @@ const Setting_Layout = () => {
       >
         <ul className="flex flex-col gap-5">
           <NavLink
+            to="/dashboard/setting/basic"
+            end
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            <li
+              className="bg-neutral-100 bg-active-link
+                  dark:bg-slate-500
+                  dark:text-white
+           p-2 border text-black rounded-md cursor-pointer"
+            >
+              General
+            </li>
+          </NavLink>
+
+          <NavLink
             to="/dashboard/setting/general"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
