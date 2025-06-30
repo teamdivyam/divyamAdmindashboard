@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Input } from "@components/components/ui/input";
 import { Label } from "@components/components/ui/label";
 import { Button } from "@components/components/ui/button";
@@ -35,6 +35,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { NumericFormat } from "react-number-format";
 import getFileNameFromImgURL from "../../../utils/extractFileNameFromImgUrl.js";
+import DiscountBox from "./components/DiscountBox.jsx";
 
 const initialState = {
   name: "",
@@ -151,6 +152,11 @@ const ViewPackage = () => {
   const [isProductModelOpen, setProductImgModel] = useState();
   //for product-banner-model
   const [isProductBannerModelOpen, setProductBannerModelOpen] = useState();
+  const [isDiscountMode, setDiscountMode] = useState(false);
+
+  const ToggleDiscountDialoge = () => {
+    setDiscountMode((prev) => !prev);
+  };
   const {
     register,
     handleSubmit,
@@ -399,6 +405,14 @@ const ViewPackage = () => {
       </ModalUploadFiles>
       {/* END_MODAL */}
 
+      {isDiscountMode && (
+        <DiscountBox
+          Open={isDiscountMode}
+          ToggleDialoge={ToggleDiscountDialoge}
+          ProductPrice={state.price && state.price}
+        />
+      )}
+
       <Toaster richColors />
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -641,12 +655,33 @@ const ViewPackage = () => {
                 ) : null}
               </div>
 
+              {/* {7} */}
+
+              <div className="grid gap-2">
+                <div className=" rounded-md border p-3 flex justify-between items-center gap-4 shadow-sm">
+                  <div>
+                    <h2 className="font-normal">Discount </h2>
+                    <p className="text-xs font-sm text-neutral-400">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Maiores ullam beatae delectus accusantium ratione hic
+                      autem est fuga at. Molestiae quo.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={isDiscountMode && isDiscountMode}
+                    onCheckedChange={(crntVal) => {
+                      setDiscountMode(true);
+                    }}
+                  />
+                </div>
+              </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="notes">Notes or Policy</Label>
                 <Textarea
                   id="notes"
                   {...register("notes")}
-                  className="h-2"
+                  className=" text-neutral-500 h-40 resize-none"
                   value={state && state.notes}
                   onChange={(e) => {
                     dispatch({ type: "ADD_NOTES", payload: e.target.value });
@@ -659,7 +694,7 @@ const ViewPackage = () => {
                 <div className=" rounded-md border p-3 flex justify-between items-center gap-4 shadow-sm">
                   <div>
                     <h2 className="font-normal">Show in Featured Section</h2>
-                    <p className="text-xs font-sm">
+                    <p className="text-xs font-sm text-neutral-500">
                       Easily add products to the Featured category with just one
                       click. This button helps you highlight selected products,
                       making them stand out on your website
@@ -678,7 +713,7 @@ const ViewPackage = () => {
                 <div className=" rounded-md border p-3 flex justify-between items-center gap-4 shadow-sm">
                   <div>
                     <h2 className="font-normal">Product Visibility</h2>
-                    <p className="text-xs font-sm">
+                    <p className="text-xs font-sm text-neutral-500">
                       Turn this switch on to feature this product on the
                       customer UI. When off, the product will remain hidden from
                       customers but still be available in your dashboard
@@ -700,7 +735,7 @@ const ViewPackage = () => {
                   id="description"
                   {...register("description")}
                   placeholder="Package description.."
-                  className="h-20"
+                  className=" text-neutral-500 h-36 resize-none"
                   value={state && state.description}
                   onChange={(e) => {
                     dispatch({ type: "ADD_DESC", payload: e.target.value });

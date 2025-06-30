@@ -63,7 +63,7 @@ const OrderView = () => {
         }, 600);
       } catch (error) {
         setLoading(true);
-        console.log(error);
+        throw new Error(error);
       }
     };
 
@@ -270,6 +270,22 @@ const OrderView = () => {
                                 <span className="ml-2">
                                   {order.booking.address.contactNumber}
                                 </span>
+                              </span>
+                            </p>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap ">
+                              Ordered At:
+                            </p>
+                          </td>
+
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            <p className="text-gray-400 whitespace-no-wrap ">
+                              <span className="flex items-center">
+                                {order && order?.createdAt}
                               </span>
                             </p>
                           </td>
