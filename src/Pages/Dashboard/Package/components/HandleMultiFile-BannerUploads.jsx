@@ -5,12 +5,9 @@ import ShowUploadedFile from "./ShowUploadedFile.jsx";
 import { config } from "../../../../../config.js";
 import imageCompression from "browser-image-compression";
 import { nanoid } from "@reduxjs/toolkit";
-
 import { Skeleton } from "@components/components/ui/skeleton";
-
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-
 import { uploadSingleImg } from "../../../../store/UploadImages/uploadImageSlice.js";
 
 const getTOKEN = localStorage.getItem("AppID");

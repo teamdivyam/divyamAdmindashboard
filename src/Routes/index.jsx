@@ -83,6 +83,8 @@ const OrderRefunded = lazy(() =>
 );
 const OrdersAll = lazy(() => import("../Pages/Dashboard/Order/OrdersAll_v2"));
 const NOT_FOUND = lazy(() => import("../Pages/Dashboard/Not-found"));
+import { ForgetPasswordPage } from "../Pages/Forget-password";
+import ResetPassword from "../Pages/ResetPassword";
 
 const DashBoardRoutes = () => {
   return (
@@ -90,7 +92,9 @@ const DashBoardRoutes = () => {
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/forget-password" element={<ForgetPasswordPage />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route
           path="/dashboard"

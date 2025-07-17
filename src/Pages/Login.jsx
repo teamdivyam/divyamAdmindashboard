@@ -18,7 +18,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { isAuth } from "../store/Auth/Authentication.js";
 import isTokenExpired from "../utils/isTokenExpired.js";
 
 const LogInFormValidationSchema = yup
@@ -30,14 +29,12 @@ const LogInFormValidationSchema = yup
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state?.Auth?.isAuthenticate);
   const [recaptchaRef, setRecaptchaRef] = useState();
+  // Redirect user on dashboard if user is logged in;
 
-  // Redirect user on dashboard if user is logged in
   const {
     register,
-    control,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -46,6 +43,25 @@ const LoginPage = () => {
   });
 
   const [error, setError] = useState(null);
+
+  const helpDeskApiCall = async () => {
+    try {
+      const res = await fetch(
+        `https://www.divyam.com/api/admin-main/me/route`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!res.ok) {
+        console.warn("Something went wrong, during helpdesk api call");
+        throw new Error("Something went wrong, Internal error.");
+      }
+      const result = await res.json();
+    } catch (error) {
+      throw new Error("Something went wrong, Internal error.");
+    }
+  };
 
   const onSubmit = async (data) => {
     const token =
@@ -70,7 +86,14 @@ const LoginPage = () => {
         if (localStorage.getItem("AppID")) {
           localStorage.removeItem("AppID");
         }
-
+        if (
+          result.statusCode == 404 &&
+          result?.msg ===
+            "MongooseError: Operation `admins.findOne()` buffering timed out after 10000ms"
+        ) {
+          setError("Something went wrong, Internal error");
+          return;
+        }
         setError(result?.msg);
       }
 
@@ -79,6 +102,9 @@ const LoginPage = () => {
 
         setError(result?.msg);
         navigate("/dashboard");
+
+        // call helpdesk api
+        helpDeskApiCall();
       }
     };
     setLogIn();
@@ -140,12 +166,12 @@ const LoginPage = () => {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  {/* <NavLink
-                    to="/forger-password"
-                    className="ml-auto inline-block text-sm underline"
+                  <NavLink
+                    to="/forget-password"
+                    className="ml-auto inline-block text-xs  text-neutral-500 hover:text-neutral-600  hover:underline ease-in-out"
                   >
-                    Forgot your password?
-                  </NavLink> */}
+                    Forgot password
+                  </NavLink>
                 </div>
                 <Input
                   id="password"

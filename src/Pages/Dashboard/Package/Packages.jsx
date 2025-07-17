@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@components/components/ui/table";
-import { DatabaseZapIcon, EllipsisVertical } from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 import {
   Dialog,
   DialogContent,

@@ -64,7 +64,6 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm({
     mode: "all",
     resolver: yupResolver(RegisterFormValidationSchema),

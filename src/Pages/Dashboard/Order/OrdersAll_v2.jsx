@@ -190,7 +190,7 @@ const OrdersAll = () => {
                   );
                   return (
                     <TableRow key={idx}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-semibold text-neutral-500">
                         <NavLink to={`/dashboard/order/${order._id}`}>
                           {order.orderId.split("_").at(1)}
                         </NavLink>
@@ -208,14 +208,14 @@ const OrdersAll = () => {
                         </div>
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell className="font-medium text-neutral-500">
                         {order?.transaction?.paymentMethod || (
                           <span className="text-neutral-500">
                             Not available
                           </span>
                         )}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right font-medium text-neutral-500">
                         {order?.totalAmount}
                       </TableCell>
                       <TableCell className="text-right">
