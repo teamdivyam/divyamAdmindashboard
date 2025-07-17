@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { X } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import imageCompression from "browser-image-compression";

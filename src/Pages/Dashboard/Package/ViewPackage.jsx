@@ -161,7 +161,6 @@ const ViewPackage = () => {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm({
     mode: "all",
